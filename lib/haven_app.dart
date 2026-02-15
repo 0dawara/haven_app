@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:haven_app/app/app.dart';
+import 'package:haven_app/shared/utils/app_theme.dart';
 import 'package:haven_app/wallhaven/wallhaven.dart';
 
 class HavenApp extends StatelessWidget {
@@ -28,10 +29,7 @@ class HavenAppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.cyan),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.themeData,
       home: const NavigationBarPage(),
     );
   }

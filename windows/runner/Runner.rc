@@ -93,7 +93,7 @@ BEGIN
             VALUE "FileDescription", "haven_app" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "haven_app" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 br.com.odawara. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 br.com.odawara. All rights reserved." "\0"
             VALUE "OriginalFilename", "haven_app.exe" "\0"
             VALUE "ProductName", "haven_app" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

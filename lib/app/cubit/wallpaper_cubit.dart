@@ -21,7 +21,7 @@ class WallpaperCubit extends HydratedCubit<WallpaperState> {
   final WallhavenRepository _wallhavenRepository;
 
   Future<void> fetchWallpaper({WallpaperQuery? wallQuery}) async {
-    if (state.homeStatus != HomeStatus.success) {
+    if (state.homeStatus != HomeStatus.loading) {
       emit(state.copyWith(homeStatus: HomeStatus.loading));
 
       try {
@@ -41,6 +41,42 @@ class WallpaperCubit extends HydratedCubit<WallpaperState> {
         log('e = $e', name: 'WallpaperCubit');
         emit(state.copyWith(homeStatus: HomeStatus.failure));
       }
+    }
+  }
+
+  Future<void> fetchMoreWallpapers() async {
+    if (state.homeStatus == HomeStatus.loading ||
+        state.isLoadingMore ||
+        state.wallpaperList.meta.currentPage >=
+            state.wallpaperList.meta.lastPage) {
+      return;
+    }
+
+    emit(state.copyWith(isLoadingMore: true));
+
+    try {
+      final nextPage = state.wallpaperList.meta.currentPage + 1;
+      final wallQuery = state.wallQuery.copyWith(page: nextPage);
+
+      final wallpaperList = await _wallhavenRepository.getWallpaper(
+        wallQuery: wallQuery,
+      );
+
+      final newWallpaperList = WallpaperList(
+        data: state.wallpaperList.data + wallpaperList.data,
+        meta: wallpaperList.meta,
+      );
+
+      emit(
+        state.copyWith(
+          isLoadingMore: false,
+          wallpaperList: newWallpaperList,
+          colorsData: getColorsData(newWallpaperList.data),
+        ),
+      );
+    } catch (e) {
+      log('e = $e', name: 'WallpaperCubit');
+      emit(state.copyWith(isLoadingMore: false));
     }
   }
 

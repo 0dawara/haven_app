@@ -4,19 +4,19 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.10.1
+  sdk: ^3.10.8
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  bloc: ^9.1.0
+  bloc: ^9.2.0
   cached_network_image: ^3.4.1
   collection: ^1.19.1
   cupertino_icons: ^1.0.8
-  device_info_plus: ^12.2.0
-  equatable: ^2.0.7
+  device_info_plus: ^12.3.0
+  equatable: ^2.0.8
   flutter_bloc: ^9.1.1
   http: ^1.6.0
   hydrated_bloc: ^10.1.1
@@ -32,8 +32,8 @@ dev_dependencies:
   bloc_test: ^10.0.0
   flutter_lints: ^6.0.0
   mocktail: ^1.0.4
-  msix: ^3.16.12
-  very_good_analysis: ^10.0.0
+  msix: ^3.16.13
+  very_good_analysis: ^10.1.0
 
 flutter:
   uses-material-design: true

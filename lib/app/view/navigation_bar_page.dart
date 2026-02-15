@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:haven_app/app/app.dart';
+import 'package:haven_app/shared/utils/app_theme.dart';
 
 class NavigationBarPage extends StatefulWidget {
   const NavigationBarPage({super.key});
@@ -16,56 +16,64 @@ class _NavigationBarPageState extends State<NavigationBarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentPageIndex = index;
-          });
-        },
-        indicatorColor: Theme.of(context).tabBarTheme.indicatorColor,
-        backgroundColor: Colors.blueGrey[400],
-        selectedIndex: currentPageIndex,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-        destinations: <Widget>[
-          NavigationDestination(
-            icon: Icon(
-              currentPageIndex == 0
-                  ? CupertinoIcons.square_grid_2x2_fill
-                  : CupertinoIcons.square_grid_2x2,
-              color: currentPageIndex == 0 ? Colors.blueAccent : Colors.black,
-            ),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(
-              currentPageIndex == 1 ? Icons.download : Icons.download_outlined,
-              color: currentPageIndex == 1 ? Colors.blueAccent : Colors.black,
-            ),
-            label: 'Saved',
-          ),
-          NavigationDestination(
-            icon: Icon(
-              currentPageIndex == 2 ? Icons.person : Icons.person_outline,
-              color: currentPageIndex == 2 ? Colors.blueAccent : Colors.black,
-            ),
-            label: 'User',
-          ),
-        ],
+      extendBody: true, // Allow body to extend behind the FAB/Bar
+      body: IndexedStack(
+        index: currentPageIndex,
+        children: const [HomePage(), SavePage(), UserPage()],
       ),
-      body: Container(
-        constraints: const BoxConstraints.expand(),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.pink.shade50, Colors.cyan.shade100],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
+      bottomNavigationBar: BottomAppBar(
+        color: AppTheme.cardColor,
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavItem(
+              0,
+              currentPageIndex == 0 ? Icons.home : Icons.home_outlined,
+              'Home',
+            ),
+            _buildNavItem(
+              1,
+              currentPageIndex == 1 ? Icons.favorite : Icons.favorite_border,
+              'Saved',
+            ),
+            _buildNavItem(
+              2,
+              currentPageIndex == 2 ? Icons.person : Icons.person_outlined,
+              'Profile',
+            ),
+          ],
         ),
-        child: <Widget>[
-          const SingleChildScrollView(child: HomePage()),
-          const SavePage(),
-          const UserPage(),
-        ][currentPageIndex],
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index, IconData icon, String label) {
+    final isSelected = currentPageIndex == index;
+    return GestureDetector(
+      onTap: () => setState(() => currentPageIndex = index),
+      behavior: HitTestBehavior.opaque,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: isSelected ? AppTheme.primaryPurple : Colors.grey,
+            size: 26,
+          ),
+          if (isSelected)
+            Text(
+              label,
+              style: const TextStyle(
+                color: AppTheme.primaryPurple,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            )
+          else
+            const SizedBox(height: 14),
+        ],
       ),
     );
   }

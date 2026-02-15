@@ -1,21 +1,47 @@
 import 'package:flutter/material.dart';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:haven_app/app/app.dart';
+import 'package:haven_app/shared/utils/app_theme.dart';
 
-class HomeWallpaperList extends StatelessWidget {
+class HomeWallpaperList extends StatefulWidget {
   const HomeWallpaperList({required this.onRefresh, super.key});
 
   final RefreshCallback onRefresh;
 
   @override
-  Widget build(BuildContext context) {
-    final mediaSize = MediaQuery.of(context).size;
+  State<HomeWallpaperList> createState() => _HomeWallpaperListState();
+}
 
+class _HomeWallpaperListState extends State<HomeWallpaperList> {
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.atEdge &&
+        _scrollController.position.pixels != 0) {
+      context.read<WallpaperCubit>().fetchMoreWallpapers();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: onRefresh,
+      onRefresh: widget.onRefresh,
+      backgroundColor: AppTheme.cardColor,
+      color: AppTheme.primaryPurple,
       child: BlocBuilder<WallpaperCubit, WallpaperState>(
         builder: (context, state) {
           switch (state.homeStatus) {
@@ -23,73 +49,165 @@ class HomeWallpaperList extends StatelessWidget {
             case HomeStatus.loading:
               return const Center(child: CircularProgressIndicator.adaptive());
             case HomeStatus.success:
-              return SizedBox(
-                height: mediaSize.height * 0.3,
-                child: ListView.builder(
-                  itemCount: state.wallpaperList.data.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      width: mediaSize.width > 1200
-                          ? mediaSize.width * 0.15
-                          : mediaSize.width > 800
-                          ? mediaSize.width * 0.25
-                          : mediaSize.width * 0.4,
-                      margin: const EdgeInsets.only(top: 8, right: 16),
-                      decoration:
-                          state.wallpaperList.data[index].purity.contains(
-                            'sketchy',
-                          )
-                          ? BoxDecoration(
-                              border: Border.all(
-                                width: 3,
-                                color: Colors.yellow,
-                              ),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(18),
-                              ),
-                            )
-                          : state.wallpaperList.data[index].purity.contains(
-                              'nsfw',
-                            )
-                          ? BoxDecoration(
-                              border: Border.all(width: 3, color: Colors.red),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(18),
-                              ),
-                            )
-                          : null,
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(15),
+              if (state.wallpaperList.data.isEmpty) {
+                return LayoutBuilder(
+                  builder: (context, constraints) => SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'No wallpapers found',
+                          style: TextStyle(color: Colors.white),
                         ),
-                        child: GestureDetector(
-                          child: CachedNetworkImage(
-                            imageUrl:
-                                state.wallpaperList.data[index].thumbs.original,
-                            filterQuality: FilterQuality.high,
-                            placeholder: (context, url) =>
-                                const CircularProgressIndicator.adaptive(),
-                            errorWidget: (context, url, error) =>
-                                const Icon(Icons.error, color: Colors.red),
-                            fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                );
+              }
+              return CustomScrollView(
+                controller: _scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.only(bottom: 80),
+                    sliver: SliverGrid(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: 0.7,
                           ),
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final wallpaper = state.wallpaperList.data[index];
+                        final purity = wallpaper.purity.toLowerCase();
+
+                        return GestureDetector(
                           onTap: () => Navigator.of(context).push(
                             MaterialPageRoute<void>(
                               builder: (_) => WallpaperDetailsPage(
-                                id: state.wallpaperList.data[index].id,
-                                url: state.wallpaperList.data[index].path,
+                                id: wallpaper.id,
+                                url: wallpaper.path,
                               ),
                             ),
                           ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                CachedNetworkImage(
+                                  imageUrl: wallpaper.thumbs.original,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(
+                                    color: AppTheme.cardColor,
+                                    child: const Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      Container(
+                                        color: AppTheme.cardColor,
+                                        child: const Icon(
+                                          Icons.error,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                ),
+                                if (purity == 'nsfw' || purity == 'sketchy')
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: purity == 'nsfw'
+                                            ? AppTheme.accentRed
+                                            : AppTheme.accentOrange,
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                  ),
+                                if (wallpaper.colors.isNotEmpty)
+                                  Positioned(
+                                    right: 8,
+                                    top: 8,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.6,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: wallpaper.colors.take(5).map((
+                                          colorHex,
+                                        ) {
+                                          final hexCode = colorHex.replaceAll(
+                                            '#',
+                                            '',
+                                          );
+                                          return Container(
+                                            margin: const EdgeInsets.symmetric(
+                                              horizontal: 2,
+                                            ),
+                                            width: 12,
+                                            height: 12,
+                                            decoration: BoxDecoration(
+                                              color: Color(
+                                                int.parse('0xFF$hexCode'),
+                                              ),
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                color: Colors.white24,
+                                                width: 1,
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }, childCount: state.wallpaperList.data.length),
+                    ),
+                  ),
+                  if (state.isLoadingMore)
+                    const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.all(24.0),
+                        child: Center(
+                          child: CircularProgressIndicator.adaptive(),
                         ),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                ],
               );
             case HomeStatus.failure:
-              return const Center(child: Text('Failed to load wallpaper'));
+              return LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Failed to load wallpaper',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              );
           }
         },
       ),
