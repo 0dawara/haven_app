@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:haven_app/core/core.dart';
 import 'package:haven_app/data/data.dart';
 import 'package:haven_app/features/navigation/view/navigation_bar_page.dart';
+import 'package:haven_app/features/saved_wallpapers/cubit/saved_wallpapers_cubit.dart';
 import 'package:haven_app/features/settings/cubit/settings_cubit.dart';
 import 'package:haven_app/features/wallpaper_actions/cubit/actions_cubit.dart';
 import 'package:haven_app/features/wallpaper_details/cubit/details_cubit.dart';
@@ -22,6 +23,9 @@ class HavenApp extends StatelessWidget {
           BlocProvider(create: (_) => SearchCubit(wallhavenRepository)),
           BlocProvider(create: (_) => DetailsCubit(wallhavenRepository)),
           BlocProvider(create: (_) => SettingsCubit(wallhavenRepository)),
+          BlocProvider(
+            create: (_) => SavedWallpapersCubit()..fetchWallpapers(),
+          ),
           RepositoryProvider(create: (_) => ActionsCubit()),
         ],
         child: const HavenAppView(),

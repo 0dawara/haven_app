@@ -1,53 +1,21 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:haven_app/features/saved_wallpapers/cubit/saved_wallpapers_cubit.dart';
+import 'package:haven_app/features/saved_wallpapers/cubit/saved_wallpapers_state.dart';
 import 'package:haven_app/features/saved_wallpapers/view/downloaded_wallpaper_page.dart';
 
 class SavePage extends StatelessWidget {
   const SavePage({super.key});
 
-  Future<List<FileSystemEntity>> getImages() async {
-    late Directory dir;
-
-    switch (Platform.operatingSystem) {
-      case 'android':
-        dir = Directory('storage/emulated/0/Pictures/wallhaven/');
-      case 'macos':
-        final docDir = await getApplicationDocumentsDirectory();
-        final listDirString = docDir.path.split('/');
-        dir = Directory('/Users/${listDirString[2]}/Pictures/wallhaven/');
-      case 'windows':
-        final docDir = await getApplicationDocumentsDirectory();
-        final listDirString = docDir.path.split(r'\');
-        dir = Directory('C:/Users/${listDirString[2]}/Pictures/wallhaven/');
-      case 'linux':
-        final docDir = await getApplicationDocumentsDirectory();
-        dir = Directory(
-          docDir.path.replaceRange(
-            docDir.path.lastIndexOf('/'),
-            null,
-            '/Pictures/wallhaven/',
-          ),
-        );
-      default:
-        dir = Directory('');
-    }
-
-    if (dir.existsSync()) {
-      return dir.listSync();
-    } else {
-      return [];
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final mediaSize = MediaQuery.of(context).size;
-    return FutureBuilder<List<FileSystemEntity>>(
-      future: getImages(),
-      builder: (context, snapshot) {
+    return BlocBuilder<SavedWallpapersCubit, SavedWallpapersState>(
+      builder: (context, state) {
+        final wallpapers = state is SavedWallpapersSuccess ? state.wallpapers : <FileSystemEntity>[];
+        
         return Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 1200),
@@ -61,12 +29,12 @@ class SavePage extends StatelessWidget {
                     style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
                   ),
                 ),
-                if (snapshot.hasData && snapshot.data!.isNotEmpty) ...[
+                if (wallpapers.isNotEmpty) ...[
                   Padding(
                     padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
                     child: Text(
-                      snapshot.data!.length > 1
-                          ? '${snapshot.data!.length} wallpapers that you saved'
+                      wallpapers.length > 1
+                          ? '${wallpapers.length} wallpapers that you saved'
                           : 'A wallpaper you saved',
                       style: const TextStyle(fontSize: 20, color: Colors.grey),
                     ),
@@ -79,7 +47,7 @@ class SavePage extends StatelessWidget {
                       ),
                       child: GridView.builder(
                         padding: EdgeInsets.zero,
-                        itemCount: snapshot.data!.length,
+                        itemCount: wallpapers.length,
                         itemBuilder: (context, index) {
                           return ClipRRect(
                             borderRadius: const BorderRadius.all(
@@ -92,14 +60,14 @@ class SavePage extends StatelessWidget {
                                     builder: (context) =>
                                         DownloadedWallpaperPage(
                                           file: File(
-                                            snapshot.data![index].path,
+                                            wallpapers[index].path,
                                           ),
                                         ),
                                   ),
                                 );
                               },
                               child: Image.file(
-                                File(snapshot.data![index].path),
+                                File(wallpapers[index].path),
                                 filterQuality: FilterQuality.high,
                                 fit: BoxFit.cover,
                               ),
@@ -120,11 +88,13 @@ class SavePage extends StatelessWidget {
                     ),
                   ),
                 ] else ...[
-                  const Padding(
-                    padding: EdgeInsets.only(left: 16, top: 8),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16, top: 8),
                     child: Text(
-                      "Can't find any saved wallpaper",
-                      style: TextStyle(fontSize: 20, color: Colors.grey),
+                      state is SavedWallpapersLoading 
+                        ? "Loading wallpapers..."
+                        : "Can't find any saved wallpaper",
+                      style: const TextStyle(fontSize: 20, color: Colors.grey),
                     ),
                   ),
                 ],
