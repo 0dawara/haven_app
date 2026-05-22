@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:haven_app/data/repository/wallpaper_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -24,43 +25,22 @@ class ActionsCubit {
 
       controller = StreamController<String>(
         onListen: () async {
-          late Directory dir;
           controller.add('Getting pictures folder...');
 
           if (Platform.isAndroid) {
             await verifyPermission();
           }
 
-          switch (Platform.operatingSystem) {
-            case 'android':
-              dir = Directory('storage/emulated/0/Pictures/wallhaven/');
-            case 'macos':
-              final docDir = await getApplicationDocumentsDirectory();
-              final listDirString = docDir.path.split('/');
-              dir = Directory('/Users/${listDirString[2]}/Pictures/wallhaven/');
-            case 'windows':
-              final docDir = await getApplicationDocumentsDirectory();
-              final listDirString = docDir.path.split(r'\');
-              dir = Directory(
-                'C:/Users/${listDirString[2]}/Pictures/wallhaven/',
-              );
-            case 'linux':
-              final docDir = await getApplicationDocumentsDirectory();
-              dir = Directory(
-                docDir.path.replaceRange(
-                  docDir.path.lastIndexOf('/'),
-                  null,
-                  '/Pictures/wallhaven/',
-                ),
-              );
-          }
+          final dir = await WallpaperStorage.getWallpaperDirectory();
 
           if (!dir.existsSync()) {
             controller.add('Creating wallhaven folder...');
             dir.createSync(recursive: true);
           }
 
-          final file = File(dir.path + url.substring(url.lastIndexOf('/') + 1));
+          final file = File(
+            '${dir.path}${url.substring(url.lastIndexOf('/') + 1)}',
+          );
           controller.add('Downloading image...');
 
           if (file.existsSync()) {
