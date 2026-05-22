@@ -1,56 +1,54 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:haven_app/shared/models/models.dart';
+import 'package:haven_app/data/models/models.dart';
 
 void main() {
   group('WallpaperList', () {
     group('fromJson', () {
       test('returns correct WallpaperList object', () {
         expect(
-          WallpaperList.fromJson(
-            const <String, dynamic>{
-              'data': [
-                {
-                  'id': 'zyxvqy',
-                  'url': 'https://wallhaven.cc/w/zyxvqy',
-                  'short_url': 'https://whvn.cc/zyxvqy',
-                  'views': 99565,
-                  'favorites': 831,
-                  'source': 'https://www.pixiv.net/artworks/102234272',
-                  'purity': 'sfw',
-                  'category': 'general',
-                  'dimension_x': 3840,
-                  'dimension_y': 2244,
-                  'resolution': '3840x2244',
-                  'ratio': '1.71',
-                  'file_size': 2643206,
-                  'file_type': 'image/jpeg',
-                  'created_at': '2022-10-26 08:36:31',
-                  'colors': [
-                    '#424153',
-                    '#996633',
-                    '#000000',
-                    '#cc6633',
-                    '#ea4c88',
-                  ],
-                  'path': 'https://w.wallhaven.cc/full/zy/wallhaven-zyxvqy.jpg',
-                  'thumbs': {
-                    'large': 'https://th.wallhaven.cc/lg/zy/zyxvqy.jpg',
-                    'original': 'https://th.wallhaven.cc/orig/zy/zyxvqy.jpg',
-                    'small': 'https://th.wallhaven.cc/small/zy/zyxvqy.jpg',
-                  },
-                }
-              ],
-              'meta': {
-                'current_page': 1,
-                'last_page': 147,
-                'per_page': 24,
-                'total': 3510,
-                'query': null,
-                'seed': null,
+          WallpaperList.fromJson(const <String, dynamic>{
+            'data': [
+              {
+                'id': 'zyxvqy',
+                'url': 'https://wallhaven.cc/w/zyxvqy',
+                'short_url': 'https://whvn.cc/zyxvqy',
+                'views': 99565,
+                'favorites': 831,
+                'source': 'https://www.pixiv.net/artworks/102234272',
+                'purity': 'sfw',
+                'category': 'general',
+                'dimension_x': 3840,
+                'dimension_y': 2244,
+                'resolution': '3840x2244',
+                'ratio': '1.71',
+                'file_size': 2643206,
+                'file_type': 'image/jpeg',
+                'created_at': '2022-10-26 08:36:31',
+                'colors': [
+                  '#424153',
+                  '#996633',
+                  '#000000',
+                  '#cc6633',
+                  '#ea4c88',
+                ],
+                'path': 'https://w.wallhaven.cc/full/zy/wallhaven-zyxvqy.jpg',
+                'thumbs': {
+                  'large': 'https://th.wallhaven.cc/lg/zy/zyxvqy.jpg',
+                  'original': 'https://th.wallhaven.cc/orig/zy/zyxvqy.jpg',
+                  'small': 'https://th.wallhaven.cc/small/zy/zyxvqy.jpg',
+                },
               },
+            ],
+            'meta': {
+              'current_page': 1,
+              'last_page': 147,
+              'per_page': 24,
+              'total': 3510,
+              'query': null,
+              'seed': null,
             },
-          ),
+          }),
           isA<WallpaperList>()
               .having((w) => w.data, 'data', isA<List<Wallpaper>>())
               .having((w) => w.data[0].id, 'id', 'zyxvqy')
@@ -84,11 +82,13 @@ void main() {
                 'created_at',
                 '2022-10-26 08:36:31',
               )
-              .having(
-                (w) => w.data[0].colors,
-                'colors',
-                ['#424153', '#996633', '#000000', '#cc6633', '#ea4c88'],
-              )
+              .having((w) => w.data[0].colors, 'colors', [
+                '#424153',
+                '#996633',
+                '#000000',
+                '#cc6633',
+                '#ea4c88',
+              ])
               .having(
                 (w) => w.data[0].path,
                 'path',

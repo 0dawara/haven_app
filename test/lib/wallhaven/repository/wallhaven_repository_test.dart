@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:flutter_test/flutter_test.dart';
-import 'package:haven_app/shared/models/models.dart';
-import 'package:haven_app/wallhaven/wallhaven.dart';
+import 'package:haven_app/data/data.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockWallhavenApiClient extends Mock implements WallhavenApiClient {}

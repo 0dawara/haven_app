@@ -3,8 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
 
-import 'package:haven_app/shared/models/models.dart';
-import 'package:haven_app/wallhaven/api/wallhaven_api_client.dart';
+import 'package:haven_app/data/models/models.dart';
+import 'package:haven_app/data/api/wallhaven_api_client.dart';
 
 class MockHttpClient extends Mock implements http.Client {}
 
@@ -43,24 +43,23 @@ void main() {
         } catch (_) {}
         verify(
           () => httpClient.get(
-            Uri.https(
-              'wallhaven.cc',
-              '/api/v1/search?sorting=toplist',
-            ),
+            Uri.https('wallhaven.cc', '/api/v1/search', {'sorting': 'toplist'}),
           ),
         ).called(1);
       });
 
-      test('throws WallpaperSearchRequestFailure on non-200 response',
-          () async {
-        final response = MockResponse();
-        when(() => response.statusCode).thenReturn(400);
-        when(() => httpClient.get(any())).thenAnswer((_) async => response);
-        expect(
-          () async => apiClient.wallpaperSearch(),
-          throwsA(isA<WallpaperSearchRequestFailure>()),
-        );
-      });
+      test(
+        'throws WallpaperSearchRequestFailure on non-200 response',
+        () async {
+          final response = MockResponse();
+          when(() => response.statusCode).thenReturn(400);
+          when(() => httpClient.get(any())).thenAnswer((_) async => response);
+          expect(
+            () async => apiClient.wallpaperSearch(),
+            throwsA(isA<WallpaperSearchRequestFailure>()),
+          );
+        },
+      );
 
       test('throws WallpaperNotFoundFailure on error response', () async {
         final response = MockResponse();
@@ -87,8 +86,7 @@ void main() {
       test('returns WallpaperList on valid response', () async {
         final response = MockResponse();
         when(() => response.statusCode).thenReturn(200);
-        when(() => response.body).thenReturn(
-          '''
+        when(() => response.body).thenReturn('''
 {
     "data": [
         {
@@ -124,15 +122,14 @@ void main() {
     ],
     "meta": {
         "current_page": 1,
-        "last_page": 147,
-        "per_page": 24,
-        "total": 3510,
+        "last_page": 1,
+        "per_page": 1,
+        "total": 1,
         "query": null,
         "seed": null
     }
 }
-''',
-        );
+''');
         when(() => httpClient.get(any())).thenAnswer((_) async => response);
         final actual = await apiClient.wallpaperSearch();
         expect(
@@ -170,17 +167,13 @@ void main() {
                 'created_at',
                 '2022-10-26 08:36:31',
               )
-              .having(
-                (l) => l.data[0].colors,
-                'colors',
-                [
-                  '#424153',
-                  '#996633',
-                  '#000000',
-                  '#cc6633',
-                  '#ea4c88',
-                ],
-              )
+              .having((l) => l.data[0].colors, 'colors', [
+                '#424153',
+                '#996633',
+                '#000000',
+                '#cc6633',
+                '#ea4c88',
+              ])
               .having(
                 (l) => l.data[0].path,
                 'path',
@@ -191,7 +184,7 @@ void main() {
                 'thumbs',
                 Thumbs.fromJson(const {
                   'large': 'https://th.wallhaven.cc/lg/zy/zyxvqy.jpg',
-                  'original': 'https://th.wallhaven.cc/or/zy/zyxvqy.jpg',
+                  'original': 'https://th.wallhaven.cc/orig/zy/zyxvqy.jpg',
                   'small': 'https://th.wallhaven.cc/small/zy/zyxvqy.jpg',
                 }),
               )

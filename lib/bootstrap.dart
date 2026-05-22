@@ -33,10 +33,9 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   Bloc.observer = const AppBlocObserver();
 
   HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory:
-        kIsWeb
-            ? HydratedStorageDirectory.web
-            : HydratedStorageDirectory((await getTemporaryDirectory()).path),
+    storageDirectory: kIsWeb
+        ? HydratedStorageDirectory.web
+        : HydratedStorageDirectory((await getTemporaryDirectory()).path),
   );
 
   runApp(await builder());
