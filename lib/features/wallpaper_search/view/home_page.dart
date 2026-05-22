@@ -19,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _textController.text = cubit.state.wallQuery.query ?? '';
     cubit.fetchWallpaper();
   }
 
@@ -35,7 +36,11 @@ class _HomePageState extends State<HomePage> {
     currentCategories[index] = !currentCategories[index];
 
     cubit.fetchWallpaper(
-      wallQuery: state.wallQuery.copyWith(category: currentCategories, page: 1),
+      wallQuery: state.wallQuery.copyWith(
+        category: currentCategories,
+        query: _textController.text,
+        page: 1,
+      ),
     );
   }
 
@@ -48,6 +53,7 @@ class _HomePageState extends State<HomePage> {
     cubit.fetchWallpaper(
       wallQuery: state.wallQuery.copyWith(
         purity: currentPurity.map((e) => e as bool?).toList(),
+        query: _textController.text,
         page: 1,
       ),
     );
@@ -56,6 +62,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: AppTheme.background,
       body: SafeArea(
         child: BlocBuilder<SearchCubit, SearchState>(
@@ -97,6 +104,7 @@ class _HomePageState extends State<HomePage> {
                             cubit.fetchWallpaper(
                               wallQuery: state.wallQuery.copyWith(
                                 sorting: WallpaperSorting.toplist,
+                                query: _textController.text,
                                 page: 1,
                               ),
                             );
@@ -109,6 +117,7 @@ class _HomePageState extends State<HomePage> {
                             cubit.fetchWallpaper(
                               wallQuery: state.wallQuery.copyWith(
                                 sorting: WallpaperSorting.hot,
+                                query: _textController.text,
                                 page: 1,
                               ),
                             );
@@ -121,6 +130,7 @@ class _HomePageState extends State<HomePage> {
                             cubit.fetchWallpaper(
                               wallQuery: state.wallQuery.copyWith(
                                 sorting: WallpaperSorting.latest,
+                                query: _textController.text,
                                 page: 1,
                               ),
                             );
@@ -133,6 +143,7 @@ class _HomePageState extends State<HomePage> {
                             cubit.fetchWallpaper(
                               wallQuery: state.wallQuery.copyWith(
                                 sorting: WallpaperSorting.random,
+                                query: _textController.text,
                                 page: 1,
                               ),
                             );
@@ -207,7 +218,10 @@ class _HomePageState extends State<HomePage> {
                     child: HomeWallpaperList(
                       onRefresh: () async {
                         cubit.fetchWallpaper(
-                          wallQuery: state.wallQuery.copyWith(page: 1),
+                          wallQuery: state.wallQuery.copyWith(
+                            query: _textController.text,
+                            page: 1,
+                          ),
                         );
                       },
                     ),

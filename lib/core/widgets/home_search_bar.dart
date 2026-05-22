@@ -50,6 +50,7 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
                           onPressed: () {
                             widget.textController.clear();
                             setState(() => showClearButton = false);
+                            widget.onSearchPressed();
                           },
                         ),
                 ),
