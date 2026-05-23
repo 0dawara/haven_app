@@ -9,10 +9,10 @@ class Avatar extends Equatable {
   });
 
   factory Avatar.fromJson(Map<String, dynamic> json) => Avatar(
-    px200: json['200px'] as String,
-    px128: json['128px'] as String,
-    px32: json['32px'] as String,
-    px20: json['20px'] as String,
+    px200: json['200px'] as String? ?? '',
+    px128: json['128px'] as String? ?? '',
+    px32: json['32px'] as String? ?? '',
+    px20: json['20px'] as String? ?? '',
   );
 
   final String px200;

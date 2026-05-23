@@ -1,7 +1,5 @@
-import 'package:flutter/material.dart';
-
 import 'package:equatable/equatable.dart';
-
+import 'package:flutter/material.dart';
 import 'package:haven_app/core/utils/color_extension.dart';
 import 'package:haven_app/core/utils/icondata_extension.dart';
 
@@ -12,14 +10,13 @@ class HomeSearchTitleModel extends Equatable {
     required this.searchTitle,
   });
 
-  factory HomeSearchTitleModel.fromJson(Map<String, dynamic> json) =>
-      HomeSearchTitleModel(
-        icon: (json['icon'] as IconData).fromJson(
-          json['icon'] as Map<String, dynamic>,
-        ),
-        iconColor: Color(int.parse(json['iconColor'] as String)),
-        searchTitle: json['searchTitle'] as String,
-      );
+  factory HomeSearchTitleModel.fromJson(Map<String, dynamic> json) {
+    return HomeSearchTitleModel(
+      icon: IconSerialization.fromJson(json['icon'] as Map<String, dynamic>),
+      iconColor: HexColor.fromHex(json['iconColor'] as String),
+      searchTitle: json['searchTitle'] as String,
+    );
+  }
 
   const HomeSearchTitleModel.toplist()
     : icon = Icons.diamond_outlined,

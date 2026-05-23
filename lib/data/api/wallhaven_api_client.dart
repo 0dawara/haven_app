@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'package:haven_app/data/api/logging_client.dart';
 import 'package:haven_app/data/models/models.dart';
 
 /// Exception thrown when wallpaperSearch fails.
@@ -51,7 +52,7 @@ class WallhavenApikeyNotValidFailure implements Exception {
 class WallhavenApiClient {
   /// {@macro open_meteo_api_client}
   WallhavenApiClient({http.Client? httpClient})
-    : _httpClient = httpClient ?? http.Client();
+    : _httpClient = httpClient ?? LoggingClient(http.Client());
 
   static const _baseUrl = 'wallhaven.cc';
 

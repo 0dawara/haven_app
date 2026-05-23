@@ -12,13 +12,13 @@ class Tag extends Equatable {
   });
 
   factory Tag.fromJson(Map<String, dynamic> json) => Tag(
-    id: json['id'] as int,
-    name: json['name'] as String,
-    alias: json['alias'] as String,
-    categoryId: json['category_id'] as int,
-    category: json['category'] as String,
-    purity: json['purity'] as String,
-    createdAt: json['created_at'] as String,
+    id: json['id'] as int? ?? 0,
+    name: json['name'] as String? ?? '',
+    alias: json['alias'] as String? ?? '',
+    categoryId: json['category_id'] as int? ?? 0,
+    category: json['category'] as String? ?? '',
+    purity: json['purity'] as String? ?? '',
+    createdAt: json['created_at'] as String? ?? '',
   );
 
   final int id;

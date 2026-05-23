@@ -9,9 +9,11 @@ class Uploader extends Equatable {
   });
 
   factory Uploader.fromJson(Map<String, dynamic> json) => Uploader(
-    username: json['username'] as String,
-    group: json['group'] as String,
-    avatar: Avatar.fromJson(json['avatar'] as Map<String, dynamic>),
+    username: json['username'] as String? ?? '',
+    group: json['group'] as String? ?? '',
+    avatar: json['avatar'] == null
+        ? Avatar.empty
+        : Avatar.fromJson(json['avatar'] as Map<String, dynamic>),
   );
 
   final String username;
