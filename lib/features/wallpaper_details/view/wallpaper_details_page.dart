@@ -47,18 +47,23 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
               minScale: 1,
               child: GestureDetector(
                 onTap: () => setState(() => showUI = !showUI),
-                child: CachedNetworkImage(
-                  imageUrl: widget.url,
-                  filterQuality: FilterQuality.high,
-                  placeholder: (context, url) => const Center(
-                    child: CircularProgressIndicator.adaptive(),
-                  ),
-                  errorWidget: (context, url, error) =>
-                      const Icon(Icons.error, color: Colors.red),
-                  height: double.infinity,
-                  width: double.infinity,
-                  fit: fit,
-                ),
+                child: widget.url.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: widget.url,
+                        filterQuality: FilterQuality.high,
+                        placeholder: (context, url) => const Center(
+                          child: CircularProgressIndicator.adaptive(),
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error, color: Colors.red),
+                        height: double.infinity,
+                        width: double.infinity,
+                        fit: fit,
+                      )
+                    : const Center(
+                        child: Icon(Icons.broken_image,
+                            color: Colors.white, size: 64),
+                      ),
               ),
             ),
           ),
@@ -78,7 +83,9 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
                       icon: const Icon(CupertinoIcons.back),
                       color: Colors.white,
                       style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(Colors.black45),
+                        backgroundColor: WidgetStateProperty.all(
+                          Colors.black45,
+                        ),
                       ),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
@@ -94,7 +101,9 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
                       ),
                       color: Colors.white,
                       style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(Colors.black45),
+                        backgroundColor: WidgetStateProperty.all(
+                          Colors.black45,
+                        ),
                       ),
                       onPressed: () => setState(
                         () => fit = fit == BoxFit.cover
@@ -128,9 +137,19 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
                                 children: [
                                   CircleAvatar(
                                     radius: 20,
-                                    backgroundImage: NetworkImage(
-                                      info.uploader.avatar.px128,
-                                    ),
+                                    backgroundColor: Colors.white10,
+                                    backgroundImage:
+                                        info.uploader.avatar.px128.isNotEmpty
+                                            ? NetworkImage(
+                                                info.uploader.avatar.px128,
+                                              )
+                                            : null,
+                                    child: info.uploader.avatar.px128.isEmpty
+                                        ? const Icon(
+                                            Icons.person,
+                                            color: Colors.white,
+                                          )
+                                        : null,
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
@@ -171,8 +190,9 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
                                           color: Colors.white.withValues(
                                             alpha: 0.1,
                                           ),
-                                          borderRadius:
-                                              BorderRadius.circular(4),
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
                                         ),
                                         child: Row(
                                           children: [
@@ -202,8 +222,9 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
                                           color: Colors.white.withValues(
                                             alpha: 0.1,
                                           ),
-                                          borderRadius:
-                                              BorderRadius.circular(4),
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
                                         ),
                                         child: Row(
                                           children: [
@@ -249,8 +270,9 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
                                       decoration: BoxDecoration(
                                         color: Colors.white10,
                                         borderRadius: BorderRadius.circular(8),
-                                        border:
-                                            Border.all(color: Colors.white12),
+                                        border: Border.all(
+                                          color: Colors.white12,
+                                        ),
                                       ),
                                       child: Text(
                                         '#${tag.name}',
@@ -270,18 +292,16 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
                                 width: double.infinity,
                                 height: 50,
                                 child: ElevatedButton(
-                                  onPressed:
-                                      () => showCupertinoModalPopup<void>(
+                                  onPressed: () =>
+                                      showCupertinoModalPopup<void>(
                                         context: context,
-                                        builder:
-                                            (BuildContext context) =>
-                                                SaveDialog(
-                                                  stream:
-                                                      actionsCubit
-                                                          .downloadImageStream(
-                                                            url: widget.url,
-                                                          ),
-                                                ),
+                                        builder: (BuildContext context) =>
+                                            SaveDialog(
+                                              stream: actionsCubit
+                                                  .downloadImageStream(
+                                                    url: widget.url,
+                                                  ),
+                                            ),
                                       ),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppTheme.primaryPurple,
@@ -305,12 +325,11 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
                                 children: [
                                   Expanded(
                                     child: OutlinedButton.icon(
-                                      onPressed:
-                                          () => showCupertinoModalPopup<void>(
+                                      onPressed: () =>
+                                          showCupertinoModalPopup<void>(
                                             context: context,
-                                            builder:
-                                                (BuildContext context) =>
-                                                    InfoDialog(wallpaper: info),
+                                            builder: (BuildContext context) =>
+                                                InfoDialog(wallpaper: info),
                                           ),
                                       icon: const Icon(
                                         CupertinoIcons.info,
@@ -329,8 +348,9 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
                                           vertical: 12,
                                         ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -338,16 +358,16 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: OutlinedButton.icon(
-                                      onPressed:
-                                          () => showCupertinoModalPopup<void>(
+                                      onPressed: () =>
+                                          showCupertinoModalPopup<void>(
                                             context: context,
                                             builder: (ctx) {
                                               final navigator = Navigator.of(
                                                 ctx,
                                               );
                                               return ShareDialog(
-                                                onPressedFile:
-                                                    () => actionsCubit
+                                                onPressedFile: () =>
+                                                    actionsCubit
                                                         .shareWallpaper(
                                                           url: widget.url,
                                                           isFile: true,
@@ -356,8 +376,8 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
                                                           (val) =>
                                                               navigator.pop(),
                                                         ),
-                                                onPressedLink:
-                                                    () => actionsCubit
+                                                onPressedLink: () =>
+                                                    actionsCubit
                                                         .shareWallpaper(
                                                           url: widget.url,
                                                           isFile: false,
@@ -386,8 +406,9 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
                                           vertical: 12,
                                         ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                       ),
                                     ),

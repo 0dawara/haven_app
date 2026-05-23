@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 extension IconSerialization on IconData {
-  IconData fromJson(Map<String, dynamic> json) {
+  static IconData fromJson(Map<String, dynamic> json) {
     return IconData(
       json['codePoint'] as int,
       fontFamily: json['fontFamily'] as String,

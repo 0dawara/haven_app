@@ -100,26 +100,36 @@ class _HomeWallpaperListState extends State<HomeWallpaperList> {
                             child: Stack(
                               fit: StackFit.expand,
                               children: [
-                                CachedNetworkImage(
-                                  imageUrl: wallpaper.thumbs.original,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Container(
-                                    color: AppTheme.cardColor,
-                                    child: const Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    ),
-                                  ),
-                                  errorWidget: (context, url, error) =>
-                                      Container(
+                                wallpaper.thumbs.original.isNotEmpty
+                                    ? CachedNetworkImage(
+                                        imageUrl: wallpaper.thumbs.original,
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) =>
+                                            Container(
+                                              color: AppTheme.cardColor,
+                                              child: const Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                    ),
+                                              ),
+                                            ),
+                                        errorWidget: (context, url, error) =>
+                                            Container(
+                                              color: AppTheme.cardColor,
+                                              child: const Icon(
+                                                Icons.error,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                      )
+                                    : Container(
                                         color: AppTheme.cardColor,
                                         child: const Icon(
-                                          Icons.error,
-                                          color: Colors.red,
+                                          Icons.broken_image,
+                                          color: Colors.white24,
                                         ),
                                       ),
-                                ),
                                 if (purity == 'nsfw' || purity == 'sketchy')
                                   Container(
                                     decoration: BoxDecoration(

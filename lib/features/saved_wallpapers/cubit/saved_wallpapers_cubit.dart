@@ -4,11 +4,13 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:haven_app/data/repository/wallpaper_storage.dart';
 import 'package:haven_app/features/saved_wallpapers/cubit/saved_wallpapers_state.dart';
+import 'package:logging/logging.dart';
 
 class SavedWallpapersCubit extends Cubit<SavedWallpapersState> {
   SavedWallpapersCubit() : super(SavedWallpapersInitial());
 
   StreamSubscription<FileSystemEvent>? _subscription;
+  static final _logger = Logger('SavedWallpapersCubit');
 
   Future<void> fetchWallpapers() async {
     try {
@@ -21,7 +23,8 @@ class SavedWallpapersCubit extends Cubit<SavedWallpapersState> {
         emit(const SavedWallpapersSuccess([]));
         _initParentWatcher(dir);
       }
-    } catch (e) {
+    } catch (e, s) {
+      _logger.severe('Failed to fetch saved wallpapers', e, s);
       emit(SavedWallpapersFailure(e.toString()));
     }
   }

@@ -192,15 +192,18 @@ class WallpaperListPage extends StatelessWidget {
             child: ClipRRect(
               borderRadius: const BorderRadius.all(Radius.circular(15)),
               child: GestureDetector(
-                child: CachedNetworkImage(
-                  imageUrl: data[index].thumbs.original,
-                  filterQuality: FilterQuality.high,
-                  placeholder: (context, url) =>
-                      const CircularProgressIndicator.adaptive(),
-                  errorWidget: (context, url, error) =>
-                      const Icon(Icons.error, color: Colors.red),
-                  fit: BoxFit.cover,
-                ),
+                child: data[index].thumbs.original.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: data[index].thumbs.original,
+                        filterQuality: FilterQuality.high,
+                        placeholder: (context, url) =>
+                            const CircularProgressIndicator.adaptive(),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error, color: Colors.red),
+                        fit: BoxFit.cover,
+                      )
+                    : const Icon(Icons.broken_image,
+                        color: Colors.white24, size: 32),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(
                     builder: (_) => WallpaperDetailsPage(

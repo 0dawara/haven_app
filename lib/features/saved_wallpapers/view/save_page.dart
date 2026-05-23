@@ -14,8 +14,10 @@ class SavePage extends StatelessWidget {
     final mediaSize = MediaQuery.of(context).size;
     return BlocBuilder<SavedWallpapersCubit, SavedWallpapersState>(
       builder: (context, state) {
-        final wallpapers = state is SavedWallpapersSuccess ? state.wallpapers : <FileSystemEntity>[];
-        
+        final wallpapers = state is SavedWallpapersSuccess
+            ? state.wallpapers
+            : <FileSystemEntity>[];
+
         return Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 1200),
@@ -59,9 +61,7 @@ class SavePage extends StatelessWidget {
                                   MaterialPageRoute(
                                     builder: (context) =>
                                         DownloadedWallpaperPage(
-                                          file: File(
-                                            wallpapers[index].path,
-                                          ),
+                                          file: File(wallpapers[index].path),
                                         ),
                                   ),
                                 );
@@ -91,9 +91,9 @@ class SavePage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 16, top: 8),
                     child: Text(
-                      state is SavedWallpapersLoading 
-                        ? "Loading wallpapers..."
-                        : "Can't find any saved wallpaper",
+                      state is SavedWallpapersLoading
+                          ? "Loading wallpapers..."
+                          : "Can't find any saved wallpaper",
                       style: const TextStyle(fontSize: 20, color: Colors.grey),
                     ),
                   ),

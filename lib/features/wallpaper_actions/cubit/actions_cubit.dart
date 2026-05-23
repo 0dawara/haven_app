@@ -1,15 +1,21 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:haven_app/data/repository/wallpaper_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ActionsCubit {
+  ActionsCubit({http.Client? httpClient})
+    : _httpClient = httpClient ?? http.Client();
+
+  final http.Client _httpClient;
+  static final _logger = Logger('ActionsCubit');
+
   Stream<String> downloadImageStream({required String url}) {
     if (Platform.isIOS) {
       return Stream.error('Please use the Share button!');
@@ -25,40 +31,53 @@ class ActionsCubit {
 
       controller = StreamController<String>(
         onListen: () async {
-          controller.add('Getting pictures folder...');
+          try {
+            controller.add('Getting pictures folder...');
 
-          if (Platform.isAndroid) {
-            await verifyPermission();
-          }
+            if (Platform.isAndroid) {
+              await verifyPermission();
+            }
 
-          final dir = await WallpaperStorage.getWallpaperDirectory();
+            final dir = await WallpaperStorage.getWallpaperDirectory();
 
-          if (!dir.existsSync()) {
-            controller.add('Creating wallhaven folder...');
-            dir.createSync(recursive: true);
-          }
+            if (!dir.existsSync()) {
+              controller.add('Creating wallhaven folder...');
+              dir.createSync(recursive: true);
+            }
 
-          final file = File(
-            '${dir.path}${url.substring(url.lastIndexOf('/') + 1)}',
-          );
-          controller.add('Downloading image...');
+            final file = File(
+              '${dir.path}${url.substring(url.lastIndexOf('/') + 1)}',
+            );
+            controller.add('Downloading image...');
 
-          if (file.existsSync()) {
-            controller.add('Image already downloaded!');
+            if (file.existsSync()) {
+              controller.add('Image already downloaded!');
+              await controller.close();
+              return;
+            }
+
+            final response = await _httpClient.get(Uri.parse(url));
+            if (response.statusCode != 200) {
+              throw Exception(
+                'Failed to download image: ${response.statusCode}',
+              );
+            }
+            final fileBodyBytes = response.bodyBytes;
+            file.writeAsBytesSync(fileBodyBytes);
+
+            controller.add('Image downloaded at Pictures/wallhaven/');
             await controller.close();
-            return;
+          } catch (e, s) {
+            _logger.severe('Failed to download image from $url', e, s);
+            controller.addError('Error on download image!');
+            await controller.close();
           }
-
-          final fileBodyBytes = await http.readBytes(Uri.parse(url));
-          file.writeAsBytesSync(fileBodyBytes);
-
-          controller.add('Image downloaded at Pictures/wallhaven/');
-          await controller.close();
         },
       );
 
       return controller.stream;
-    } catch (e) {
+    } catch (e, s) {
+      _logger.severe('Failed to create download stream for $url', e, s);
       return Stream.error('Error on download image!');
     }
   }
@@ -90,7 +109,13 @@ class ActionsCubit {
         final file = File(
           '${dir.path}/${url.substring(url.lastIndexOf('/') + 1)}',
         );
-        final fileBodyBytes = await http.readBytes(Uri.parse(url));
+        final response = await _httpClient.get(Uri.parse(url));
+        if (response.statusCode != 200) {
+          throw Exception(
+            'Failed to download image for sharing: ${response.statusCode}',
+          );
+        }
+        final fileBodyBytes = response.bodyBytes;
         file.writeAsBytesSync(fileBodyBytes);
 
         shareParams = ShareParams(files: [XFile(file.path)]);
@@ -103,8 +128,8 @@ class ActionsCubit {
       }
 
       await SharePlus.instance.share(shareParams);
-    } on Exception catch (e) {
-      log('e = $e', name: 'ActionsCubit');
+    } on Exception catch (e, s) {
+      _logger.severe('Failed to share wallpaper: $url', e, s);
     }
   }
 }

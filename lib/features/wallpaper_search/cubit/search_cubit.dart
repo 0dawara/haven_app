@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
 import 'package:haven_app/core/core.dart';
 import 'package:haven_app/data/data.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:logging/logging.dart';
 
 part 'search_state.dart';
 
@@ -12,6 +12,7 @@ class SearchCubit extends HydratedCubit<SearchState> {
   SearchCubit(this._wallhavenRepository) : super(const SearchState());
 
   final WallhavenRepository _wallhavenRepository;
+  static final _logger = Logger('SearchCubit');
 
   Future<void> fetchWallpaper({WallpaperQuery? wallQuery}) async {
     if (state.status != SearchStatus.loading) {
@@ -30,8 +31,8 @@ class SearchCubit extends HydratedCubit<SearchState> {
             wallQuery: wallQuery,
           ),
         );
-      } catch (e) {
-        log('e = $e', name: 'SearchCubit');
+      } catch (e, s) {
+        _logger.severe('Failed to fetch wallpapers', e, s);
         emit(state.copyWith(status: SearchStatus.failure));
       }
     }
@@ -67,8 +68,8 @@ class SearchCubit extends HydratedCubit<SearchState> {
           colorsData: getColorsData(newWallpaperList.data),
         ),
       );
-    } catch (e) {
-      log('e = $e', name: 'SearchCubit');
+    } catch (e, s) {
+      _logger.severe('Failed to fetch more wallpapers', e, s);
       emit(state.copyWith(isLoadingMore: false));
     }
   }
