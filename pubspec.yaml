@@ -25,6 +25,7 @@ dependencies:
   permission_handler: ^12.0.1
   share_plus: ^12.0.2
   url_launcher: ^6.3.2
+  logging: ^1.3.0
 
 dev_dependencies:
   flutter_test:

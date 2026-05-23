@@ -9,6 +9,9 @@ import 'package:haven_app/features/wallpaper_actions/cubit/actions_cubit.dart';
 import 'package:haven_app/features/wallpaper_details/cubit/details_cubit.dart';
 import 'package:haven_app/features/wallpaper_search/cubit/search_cubit.dart';
 
+import 'package:haven_app/data/api/logging_client.dart';
+import 'package:http/http.dart' as http;
+
 class HavenApp extends StatelessWidget {
   const HavenApp({required this.wallhavenRepository, super.key});
 
@@ -26,7 +29,10 @@ class HavenApp extends StatelessWidget {
           BlocProvider(
             create: (_) => SavedWallpapersCubit()..fetchWallpapers(),
           ),
-          RepositoryProvider(create: (_) => ActionsCubit()),
+          RepositoryProvider(
+            create: (_) =>
+                ActionsCubit(httpClient: LoggingClient(http.Client())),
+          ),
         ],
         child: const HavenAppView(),
       ),
