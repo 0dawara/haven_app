@@ -1,11 +1,12 @@
 import 'dart:developer' as dev;
+import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 /// Centralized logger for the application.
 class AppLogger {
   /// Initializes the logging system.
   static void init() {
-    Logger.root.level = Level.ALL;
+    Logger.root.level = kDebugMode ? Level.INFO : Level.WARNING;
     Logger.root.onRecord.listen((record) {
       dev.log(
         record.message,
