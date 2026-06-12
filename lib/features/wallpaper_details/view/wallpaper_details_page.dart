@@ -6,6 +6,8 @@ import 'package:haven_app/core/core.dart';
 import 'package:haven_app/features/settings/cubit/settings_cubit.dart';
 import 'package:haven_app/features/wallpaper_actions/cubit/actions_cubit.dart';
 import 'package:haven_app/features/wallpaper_details/cubit/details_cubit.dart';
+import 'package:haven_app/features/wallpaper_search/cubit/search_cubit.dart';
+import 'package:haven_app/features/navigation/view/navigation_bar_page.dart';
 
 class WallpaperDetailsPage extends StatefulWidget {
   const WallpaperDetailsPage({required this.id, required this.url, super.key});
@@ -262,23 +264,40 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
                                       const SizedBox(width: 8),
                                   itemBuilder: (context, index) {
                                     final tag = info.tags[index];
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 6,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white10,
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: Colors.white12,
+                                    return GestureDetector(
+                                      onTap: () {
+                                        final searchCubit = context.read<SearchCubit>();
+                                        searchCubit.fetchWallpaper(
+                                          wallQuery: searchCubit.state.wallQuery.copyWith(
+                                            query: tag.name,
+                                            page: 1,
+                                          ),
+                                        );
+                                        Navigator.of(context).pushAndRemoveUntil(
+                                          MaterialPageRoute<void>(
+                                            builder: (_) => const NavigationBarPage(),
+                                          ),
+                                          (route) => false,
+                                        );
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 6,
                                         ),
-                                      ),
-                                      child: Text(
-                                        '#${tag.name}',
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white10,
+                                          borderRadius: BorderRadius.circular(8),
+                                          border: Border.all(
+                                            color: Colors.white12,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          '#${tag.name}',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                          ),
                                         ),
                                       ),
                                     );

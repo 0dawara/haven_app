@@ -65,7 +65,13 @@ class _HomePageState extends State<HomePage> {
       resizeToAvoidBottomInset: false,
       backgroundColor: AppTheme.background,
       body: SafeArea(
-        child: BlocBuilder<SearchCubit, SearchState>(
+        child: BlocConsumer<SearchCubit, SearchState>(
+          listenWhen: (previous, current) => previous.wallQuery.query != current.wallQuery.query,
+          listener: (context, state) {
+            if (_textController.text != (state.wallQuery.query ?? '')) {
+              _textController.text = state.wallQuery.query ?? '';
+            }
+          },
           builder: (context, state) {
             final activeSort =
                 state.wallQuery.sorting ?? WallpaperSorting.toplist;
