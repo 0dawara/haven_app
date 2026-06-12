@@ -142,57 +142,35 @@ class _SettingsPageState extends State<SettingsPage> {
                           },
                           icon: const Icon(Icons.paste_outlined),
                         ),
+                        IconButton(
+                          onPressed: clearKey,
+                          icon: const Icon(Icons.clear),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () async => apikeyValidation(),
-                            style: ButtonStyle(
-                              backgroundColor: WidgetStateProperty.all<Color>(
-                                Theme.of(context).colorScheme.primary,
-                              ),
-                              foregroundColor: WidgetStateProperty.all<Color>(
-                                Theme.of(context).colorScheme.onPrimary,
-                              ),
-                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              padding: WidgetStateProperty.all<EdgeInsets>(
-                                const EdgeInsets.all(16),
-                              ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: TextButton(
+                        onPressed: () async => apikeyValidation(),
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.all<Color>(
+                            Theme.of(context).colorScheme.primary,
+                          ),
+                          foregroundColor: WidgetStateProperty.all<Color>(
+                            Theme.of(context).colorScheme.onPrimary,
+                          ),
+                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            child: const Text('Validate'),
+                          ),
+                          padding: WidgetStateProperty.all<EdgeInsets>(
+                            const EdgeInsets.all(16),
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: TextButton(
-                            onPressed: clearKey,
-                            style: ButtonStyle(
-                              backgroundColor: WidgetStateProperty.all<Color>(
-                                Colors.red,
-                              ),
-                              foregroundColor: WidgetStateProperty.all<Color>(
-                                Colors.white,
-                              ),
-                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              padding: WidgetStateProperty.all<EdgeInsets>(
-                                const EdgeInsets.all(16),
-                              ),
-                            ),
-                            child: const Text('Clear'),
-                          ),
-                        ),
-                      ],
+                        child: const Text('Validate'),
+                      ),
                     ),
                     const SizedBox(height: 24),
                     BlocBuilder<SettingsCubit, SettingsState>(
