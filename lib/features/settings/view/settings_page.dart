@@ -16,6 +16,7 @@ class _SettingsPageState extends State<SettingsPage> {
   SearchCubit get searchCubit => context.read<SearchCubit>();
 
   final _textController = TextEditingController();
+  bool _obscureKey = true;
 
   Future<void> apikeyValidation() async {
     final value = _textController.text;
@@ -47,6 +48,16 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  void clearKey() {
+    _textController.clear();
+    settingsCubit.clearApikey();
+    final purity =
+        List<bool>.from(searchCubit.state.wallQuery.purity ?? [true, false, false]);
+    if (purity.length == 3) purity[2] = false;
+    searchCubit.updateWallpaperQuery(
+      searchCubit.state.wallQuery.copyWith(purity: purity, apikey: ''),
+    );
+  }
   @override
   void initState() {
     super.initState();
@@ -92,16 +103,28 @@ class _SettingsPageState extends State<SettingsPage> {
                         Expanded(
                           child: TextField(
                             controller: _textController,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               hintText: 'API key',
-                              border: OutlineInputBorder(
+                              border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(16),
                                 ),
                               ),
                               fillColor: Colors.white,
                               filled: true,
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscureKey ? Icons.visibility_off : Icons.visibility,
+                                  color: Colors.grey,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscureKey = !_obscureKey;
+                                  });
+                                },
+                              ),
                             ),
+                            obscureText: _obscureKey,
                             style: const TextStyle(color: Colors.black),
                             textAlign: TextAlign.center,
                             keyboardType: TextInputType.text,
@@ -122,29 +145,54 @@ class _SettingsPageState extends State<SettingsPage> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
-                      child: TextButton(
-                        onPressed: () async => apikeyValidation(),
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all<Color>(
-                            Theme.of(context).colorScheme.primary,
-                          ),
-                          foregroundColor: WidgetStateProperty.all<Color>(
-                            Theme.of(context).colorScheme.onPrimary,
-                          ),
-                          shape:
-                              WidgetStateProperty.all<RoundedRectangleBorder>(
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () async => apikeyValidation(),
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.all<Color>(
+                                Theme.of(context).colorScheme.primary,
+                              ),
+                              foregroundColor: WidgetStateProperty.all<Color>(
+                                Theme.of(context).colorScheme.onPrimary,
+                              ),
+                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
-                          padding: WidgetStateProperty.all<EdgeInsets>(
-                            const EdgeInsets.all(16),
+                              padding: WidgetStateProperty.all<EdgeInsets>(
+                                const EdgeInsets.all(16),
+                              ),
+                            ),
+                            child: const Text('Validate'),
                           ),
                         ),
-                        child: const Text('Validate'),
-                      ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: TextButton(
+                            onPressed: clearKey,
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.all<Color>(
+                                Colors.red,
+                              ),
+                              foregroundColor: WidgetStateProperty.all<Color>(
+                                Colors.white,
+                              ),
+                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              padding: WidgetStateProperty.all<EdgeInsets>(
+                                const EdgeInsets.all(16),
+                              ),
+                            ),
+                            child: const Text('Clear'),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 24),
                     BlocBuilder<SettingsCubit, SettingsState>(
