@@ -9,7 +9,6 @@ class SearchState extends Equatable {
     this.colorsData = const {},
     this.wallQuery = const WallpaperQuery(),
     this.homeSearchTitleModel = const HomeSearchTitleModel.toplist(),
-    this.isLoadingMore = false,
   });
 
   factory SearchState.fromJson(Map<String, dynamic> json) => SearchState(
@@ -28,7 +27,6 @@ class SearchState extends Equatable {
         : HomeSearchTitleModel.fromJson(
             json['homeSearchTitleModel'] as Map<String, dynamic>,
           ),
-    isLoadingMore: json['isLoadingMore'] as bool? ?? false,
   );
 
   final SearchStatus status;
@@ -36,7 +34,6 @@ class SearchState extends Equatable {
   final Map<String, int> colorsData;
   final WallpaperQuery wallQuery;
   final HomeSearchTitleModel homeSearchTitleModel;
-  final bool isLoadingMore;
 
   SearchState copyWith({
     SearchStatus? status,
@@ -44,7 +41,6 @@ class SearchState extends Equatable {
     Map<String, int>? colorsData,
     WallpaperQuery? wallQuery,
     HomeSearchTitleModel? homeSearchTitleModel,
-    bool? isLoadingMore,
   }) {
     return SearchState(
       status: status ?? this.status,
@@ -52,7 +48,6 @@ class SearchState extends Equatable {
       colorsData: colorsData ?? this.colorsData,
       wallQuery: wallQuery ?? this.wallQuery,
       homeSearchTitleModel: homeSearchTitleModel ?? this.homeSearchTitleModel,
-      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
     );
   }
 
@@ -62,7 +57,6 @@ class SearchState extends Equatable {
     'colorsData': colorsData,
     'wallQuery': wallQuery.toJson(),
     'homeSearchTitleModel': homeSearchTitleModel.toJson(),
-    'isLoadingMore': isLoadingMore,
   };
 
   @override
@@ -72,6 +66,5 @@ class SearchState extends Equatable {
     colorsData,
     wallQuery,
     homeSearchTitleModel,
-    isLoadingMore,
   ];
 }

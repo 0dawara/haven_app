@@ -38,41 +38,6 @@ class SearchCubit extends HydratedCubit<SearchState> {
     }
   }
 
-  Future<void> fetchMoreWallpapers() async {
-    if (state.status == SearchStatus.loading ||
-        state.isLoadingMore ||
-        state.wallpaperList.meta.currentPage >=
-            state.wallpaperList.meta.lastPage) {
-      return;
-    }
-
-    emit(state.copyWith(isLoadingMore: true));
-
-    try {
-      final nextPage = state.wallpaperList.meta.currentPage + 1;
-      final wallQuery = state.wallQuery.copyWith(page: nextPage);
-
-      final wallpaperList = await _wallhavenRepository.getWallpaper(
-        wallQuery: wallQuery,
-      );
-
-      final newWallpaperList = WallpaperList(
-        data: state.wallpaperList.data + wallpaperList.data,
-        meta: wallpaperList.meta,
-      );
-
-      emit(
-        state.copyWith(
-          isLoadingMore: false,
-          wallpaperList: newWallpaperList,
-          colorsData: getColorsData(newWallpaperList.data),
-        ),
-      );
-    } catch (e, s) {
-      _logger.severe('Failed to fetch more wallpapers', e, s);
-      emit(state.copyWith(isLoadingMore: false));
-    }
-  }
 
   Map<String, int> getColorsData(List<Wallpaper> data) {
     final colorsMap = <String, int>{};

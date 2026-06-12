@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' hide RefreshCallback;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:haven_app/core/utils/app_theme.dart';
@@ -15,26 +16,10 @@ class HomeWallpaperList extends StatefulWidget {
 }
 
 class _HomeWallpaperListState extends State<HomeWallpaperList> {
-  final _scrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
-  }
 
   @override
   void dispose() {
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
     super.dispose();
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.atEdge &&
-        _scrollController.position.pixels != 0) {
-      context.read<SearchCubit>().fetchMoreWallpapers();
-    }
   }
 
   @override
@@ -69,11 +54,10 @@ class _HomeWallpaperListState extends State<HomeWallpaperList> {
                 );
               }
               return CustomScrollView(
-                controller: _scrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [
                   SliverPadding(
-                    padding: const EdgeInsets.only(bottom: 80),
+                    padding: const EdgeInsets.only(bottom: 20),
                     sliver: SliverGrid(
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
@@ -191,15 +175,15 @@ class _HomeWallpaperListState extends State<HomeWallpaperList> {
                       }, childCount: state.wallpaperList.data.length),
                     ),
                   ),
-                  if (state.isLoadingMore)
-                    const SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.all(24.0),
-                        child: Center(
-                          child: CircularProgressIndicator.adaptive(),
-                        ),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 24.0),
+                      child: _PageNavigation(
+                        currentPage: state.wallpaperList.meta.currentPage,
+                        lastPage: state.wallpaperList.meta.lastPage,
                       ),
                     ),
+                  ),
                 ],
               );
             case SearchStatus.failure:
@@ -222,6 +206,114 @@ class _HomeWallpaperListState extends State<HomeWallpaperList> {
           }
         },
       ),
+    );
+  }
+}
+
+class _PageNavigation extends StatelessWidget {
+  const _PageNavigation({
+    required this.currentPage,
+    required this.lastPage,
+  });
+
+  final int currentPage;
+  final int lastPage;
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.read<SearchCubit>();
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.chevron_left, color: Colors.white),
+          onPressed: currentPage > 1
+              ? () {
+                  cubit.fetchWallpaper(
+                    wallQuery: cubit.state.wallQuery.copyWith(
+                      page: currentPage - 1,
+                    ),
+                  );
+                }
+              : null,
+        ),
+        const SizedBox(width: 16),
+        TextButton(
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.white,
+          ),
+          onPressed: () async {
+            final page = await showDialog<int>(
+              context: context,
+              builder: (context) {
+                int selectedPage = currentPage;
+                return AlertDialog(
+                  backgroundColor: AppTheme.cardColor,
+                  title: const Text('Go to page', style: TextStyle(color: Colors.white)),
+                  content: SizedBox(
+                    height: 200,
+                    child: CupertinoPicker.builder(
+                      scrollController: FixedExtentScrollController(
+                        initialItem: currentPage - 1,
+                      ),
+                      itemExtent: 40,
+                      onSelectedItemChanged: (index) {
+                        selectedPage = index + 1;
+                      },
+                      childCount: lastPage,
+                      itemBuilder: (context, index) {
+                        return Center(
+                          child: Text(
+                            '${index + 1}',
+                            style: const TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(selectedPage),
+                      child: const Text('Go', style: TextStyle(color: AppTheme.primaryPurple)),
+                    ),
+                  ],
+                );
+              },
+            );
+
+            if (page != null && page != currentPage && context.mounted) {
+              cubit.fetchWallpaper(
+                wallQuery: cubit.state.wallQuery.copyWith(page: page),
+              );
+            }
+          },
+          child: Text(
+            'Page $currentPage of $lastPage',
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+        ),
+        const SizedBox(width: 16),
+        IconButton(
+          icon: const Icon(Icons.chevron_right, color: Colors.white),
+          onPressed: currentPage < lastPage
+              ? () {
+                  cubit.fetchWallpaper(
+                    wallQuery: cubit.state.wallQuery.copyWith(
+                      page: currentPage + 1,
+                    ),
+                  );
+                }
+              : null,
+        ),
+      ],
     );
   }
 }
