@@ -1,18 +1,18 @@
-name: haven_app
+name: haven
 description: "A Flutter project experimentation with wallhaven API."
 publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.12.2
+  sdk: ^3.13.4
 
 dependencies:
   bloc: ^9.2.1
-  cached_network_image: ^3.4.1
+  cached_network_image: ^4.0.0
   collection: ^1.19.1
   cupertino_icons: ^1.0.9
-  device_info_plus: ^13.1.0
-  equatable: ^2.0.8
+  device_info_plus: ^13.2.0
+  equatable: ^3.0.0
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
@@ -20,11 +20,11 @@ dependencies:
     sdk: flutter
   http: ^1.6.0
   hydrated_bloc: ^11.0.0
-  intl: ^0.20.2
+  intl: ^0.20.3
   logging: ^1.3.0
-  path_provider: ^2.1.5
-  permission_handler: ^12.0.3
-  share_plus: ^13.1.0
+  path_provider: ^2.1.6
+  permission_handler: ^13.0.2
+  share_plus: ^13.3.0
   url_launcher: ^6.3.2
 
 dev_dependencies:
@@ -33,8 +33,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   bloc_test: ^10.0.0
   mocktail: ^1.0.5
-  msix: ^3.17.0
-  very_good_analysis: ^10.2.0
+  msix: ^3.18.0
 
 flutter:
   uses-material-design: true
@@ -44,7 +43,7 @@ msix_config:
   display_name: Haven App
   publisher_display_name: odawara.dev
   store: false
-  identity_name: br.com.odawara.havenapp
+  identity_name: br.com.odawara.haven
   msix_version: 1.0.0.1
   architecture: x64
   capabilities: internetClient, picturesLibrary
