@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:haven_app/core/utils/utils.dart';
-import 'package:haven_app/features/wallpaper_search/cubit/search_cubit.dart';
+import 'package:haven/core/utils/utils.dart';
+import 'package:haven/features/wallpaper_search/cubit/search_cubit.dart';
 
 class HomeColorsToneList extends StatelessWidget {
   const HomeColorsToneList({super.key});
@@ -73,7 +71,7 @@ class HomeColorsToneList extends StatelessWidget {
                   ),
                 );
               case SearchStatus.failure:
-                return const Center(child: Text('Failed to load colors'));
+                return const SizedBox.shrink();
             }
           },
         ),

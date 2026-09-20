@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart' hide RefreshCallback;
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart' hide RefreshCallback;
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:haven_app/core/utils/app_theme.dart';
-import 'package:haven_app/features/wallpaper_details/view/wallpaper_details_page.dart';
-import 'package:haven_app/features/wallpaper_search/cubit/search_cubit.dart';
+import 'package:haven/core/utils/app_theme.dart';
+import 'package:haven/core/widgets/api_error_view.dart';
+import 'package:haven/features/wallpaper_details/view/wallpaper_details_page.dart';
+import 'package:haven/features/wallpaper_search/cubit/search_cubit.dart';
 
 class HomeWallpaperList extends StatefulWidget {
   const HomeWallpaperList({required this.onRefresh, super.key});
@@ -16,7 +17,6 @@ class HomeWallpaperList extends StatefulWidget {
 }
 
 class _HomeWallpaperListState extends State<HomeWallpaperList> {
-
   @override
   void dispose() {
     super.dispose();
@@ -194,10 +194,9 @@ class _HomeWallpaperListState extends State<HomeWallpaperList> {
                     constraints: BoxConstraints(
                       minHeight: constraints.maxHeight,
                     ),
-                    child: const Center(
-                      child: Text(
-                        'Failed to load wallpaper',
-                        style: TextStyle(color: Colors.white),
+                    child: ApiErrorView(
+                      onRetry: () => context.read<SearchCubit>().fetchWallpaper(
+                        wallQuery: state.wallQuery,
                       ),
                     ),
                   ),
@@ -211,10 +210,7 @@ class _HomeWallpaperListState extends State<HomeWallpaperList> {
 }
 
 class _PageNavigation extends StatelessWidget {
-  const _PageNavigation({
-    required this.currentPage,
-    required this.lastPage,
-  });
+  const _PageNavigation({required this.currentPage, required this.lastPage});
 
   final int currentPage;
   final int lastPage;
@@ -240,9 +236,7 @@ class _PageNavigation extends StatelessWidget {
         ),
         const SizedBox(width: 16),
         TextButton(
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.white,
-          ),
+          style: TextButton.styleFrom(foregroundColor: Colors.white),
           onPressed: () async {
             final page = await showDialog<int>(
               context: context,
@@ -250,7 +244,10 @@ class _PageNavigation extends StatelessWidget {
                 int selectedPage = currentPage;
                 return AlertDialog(
                   backgroundColor: AppTheme.cardColor,
-                  title: const Text('Go to page', style: TextStyle(color: Colors.white)),
+                  title: const Text(
+                    'Go to page',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   content: SizedBox(
                     height: 200,
                     child: CupertinoPicker.builder(
@@ -266,7 +263,10 @@ class _PageNavigation extends StatelessWidget {
                         return Center(
                           child: Text(
                             '${index + 1}',
-                            style: const TextStyle(color: Colors.white, fontSize: 20),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
                           ),
                         );
                       },
@@ -275,11 +275,17 @@ class _PageNavigation extends StatelessWidget {
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.white54),
+                      ),
                     ),
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(selectedPage),
-                      child: const Text('Go', style: TextStyle(color: AppTheme.primaryPurple)),
+                      child: const Text(
+                        'Go',
+                        style: TextStyle(color: AppTheme.primaryPurple),
+                      ),
                     ),
                   ],
                 );
@@ -294,10 +300,7 @@ class _PageNavigation extends StatelessWidget {
           },
           child: Text(
             'Page $currentPage of $lastPage',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
         ),
         const SizedBox(width: 16),

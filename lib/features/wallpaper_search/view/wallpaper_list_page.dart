@@ -2,10 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:haven_app/core/core.dart';
-import 'package:haven_app/data/models/models.dart';
-import 'package:haven_app/features/wallpaper_details/view/wallpaper_details_page.dart';
-import 'package:haven_app/features/wallpaper_search/cubit/search_cubit.dart';
+import 'package:haven/core/core.dart';
+import 'package:haven/data/models/models.dart';
+import 'package:haven/features/wallpaper_details/view/wallpaper_details_page.dart';
+import 'package:haven/features/wallpaper_search/cubit/search_cubit.dart';
 
 class WallpaperListPage extends StatelessWidget {
   const WallpaperListPage({
@@ -105,8 +105,12 @@ class WallpaperListPage extends StatelessWidget {
                         mediaSize: mediaSize,
                         data: state.wallpaperList.data,
                       ),
-                      SearchStatus.failure => const Center(
-                        child: Text('Failed to load wallpapers'),
+                      SearchStatus.failure => Expanded(
+                        child: ApiErrorView(
+                          onRetry: () => cubit.fetchWallpaper(
+                            wallQuery: cubit.state.wallQuery,
+                          ),
+                        ),
                       ),
                     },
                   ],
@@ -202,8 +206,11 @@ class WallpaperListPage extends StatelessWidget {
                             const Icon(Icons.error, color: Colors.red),
                         fit: BoxFit.cover,
                       )
-                    : const Icon(Icons.broken_image,
-                        color: Colors.white24, size: 32),
+                    : const Icon(
+                        Icons.broken_image,
+                        color: Colors.white24,
+                        size: 32,
+                      ),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(
                     builder: (_) => WallpaperDetailsPage(
