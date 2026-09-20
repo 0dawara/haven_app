@@ -1,4 +1,4 @@
-package br.com.odawara.haven_app
+package br.com.odawara.haven
 
 import io.flutter.embedding.android.FlutterActivity
 
