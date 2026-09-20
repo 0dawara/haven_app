@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:haven_app/core/core.dart';
+import 'package:haven/core/core.dart';
 
 class HomeSearchTitle extends StatelessWidget {
   const HomeSearchTitle({

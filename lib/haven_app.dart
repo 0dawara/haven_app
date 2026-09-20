@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:haven_app/core/core.dart';
-import 'package:haven_app/data/data.dart';
-import 'package:haven_app/features/navigation/view/navigation_bar_page.dart';
-import 'package:haven_app/features/saved_wallpapers/cubit/saved_wallpapers_cubit.dart';
-import 'package:haven_app/features/settings/cubit/settings_cubit.dart';
-import 'package:haven_app/features/wallpaper_actions/cubit/actions_cubit.dart';
-import 'package:haven_app/features/wallpaper_details/cubit/details_cubit.dart';
-import 'package:haven_app/features/wallpaper_search/cubit/search_cubit.dart';
-
-import 'package:haven_app/data/api/logging_client.dart';
+import 'package:haven/core/core.dart';
+import 'package:haven/data/api/logging_client.dart';
+import 'package:haven/data/data.dart';
+import 'package:haven/features/navigation/view/navigation_bar_page.dart';
+import 'package:haven/features/saved_wallpapers/cubit/saved_wallpapers_cubit.dart';
+import 'package:haven/features/settings/cubit/settings_cubit.dart';
+import 'package:haven/features/wallpaper_actions/cubit/actions_cubit.dart';
+import 'package:haven/features/wallpaper_details/cubit/details_cubit.dart';
+import 'package:haven/features/wallpaper_search/cubit/search_cubit.dart';
 import 'package:http/http.dart' as http;
 
 class HavenApp extends StatelessWidget {

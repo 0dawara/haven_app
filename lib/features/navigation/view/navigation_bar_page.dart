@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:haven_app/core/core.dart';
-import 'package:haven_app/features/wallpaper_search/view/home_page.dart';
-import 'package:haven_app/features/saved_wallpapers/view/save_page.dart';
-import 'package:haven_app/features/settings/view/settings_page.dart';
+import 'package:haven/core/core.dart';
+import 'package:haven/features/saved_wallpapers/view/save_page.dart';
+import 'package:haven/features/settings/view/settings_page.dart';
+import 'package:haven/features/wallpaper_search/view/home_page.dart';
 
 class NavigationBarPage extends StatefulWidget {
   const NavigationBarPage({super.key});

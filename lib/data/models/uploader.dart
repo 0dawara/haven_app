@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:haven_app/data/models/avatar.dart';
+import 'package:haven/data/models/avatar.dart';
 
 class Uploader extends Equatable {
   const Uploader({

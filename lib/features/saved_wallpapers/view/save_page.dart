@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:haven_app/features/saved_wallpapers/cubit/saved_wallpapers_cubit.dart';
-import 'package:haven_app/features/saved_wallpapers/cubit/saved_wallpapers_state.dart';
-import 'package:haven_app/features/saved_wallpapers/view/downloaded_wallpaper_page.dart';
+import 'package:haven/features/saved_wallpapers/cubit/saved_wallpapers_cubit.dart';
+import 'package:haven/features/saved_wallpapers/cubit/saved_wallpapers_state.dart';
+import 'package:haven/features/saved_wallpapers/view/downloaded_wallpaper_page.dart';
 
 class SavePage extends StatelessWidget {
   const SavePage({super.key});

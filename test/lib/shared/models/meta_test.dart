@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:haven_app/data/models/meta.dart';
+import 'package:haven/data/models/meta.dart';
 
 void main() {
   group('Meta', () {

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:haven_app/data/models/models.dart';
-import 'package:haven_app/features/wallpaper_search/cubit/search_cubit.dart';
+import 'package:haven/data/models/models.dart';
+import 'package:haven/features/wallpaper_search/cubit/search_cubit.dart';
 
 class CustomSearchDialog extends StatelessWidget {
   const CustomSearchDialog({required this.ctx, super.key});

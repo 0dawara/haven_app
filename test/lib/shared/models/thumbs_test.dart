@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:haven_app/data/models/thumbs.dart';
+import 'package:haven/data/models/thumbs.dart';
 
 void main() {
   group('Thumbs', () {

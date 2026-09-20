@@ -2,12 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:haven_app/core/core.dart';
-import 'package:haven_app/features/settings/cubit/settings_cubit.dart';
-import 'package:haven_app/features/wallpaper_actions/cubit/actions_cubit.dart';
-import 'package:haven_app/features/wallpaper_details/cubit/details_cubit.dart';
-import 'package:haven_app/features/wallpaper_search/cubit/search_cubit.dart';
-import 'package:haven_app/features/navigation/view/navigation_bar_page.dart';
+import 'package:haven/core/core.dart';
+import 'package:haven/features/navigation/view/navigation_bar_page.dart';
+import 'package:haven/features/settings/cubit/settings_cubit.dart';
+import 'package:haven/features/wallpaper_actions/cubit/actions_cubit.dart';
+import 'package:haven/features/wallpaper_details/cubit/details_cubit.dart';
+import 'package:haven/features/wallpaper_search/cubit/search_cubit.dart';
 
 class WallpaperDetailsPage extends StatefulWidget {
   const WallpaperDetailsPage({required this.id, required this.url, super.key});
@@ -63,8 +63,11 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
                         fit: fit,
                       )
                     : const Center(
-                        child: Icon(Icons.broken_image,
-                            color: Colors.white, size: 64),
+                        child: Icon(
+                          Icons.broken_image,
+                          color: Colors.white,
+                          size: 64,
+                        ),
                       ),
               ),
             ),
@@ -142,10 +145,10 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
                                     backgroundColor: Colors.white10,
                                     backgroundImage:
                                         info.uploader.avatar.px128.isNotEmpty
-                                            ? NetworkImage(
-                                                info.uploader.avatar.px128,
-                                              )
-                                            : null,
+                                        ? NetworkImage(
+                                            info.uploader.avatar.px128,
+                                          )
+                                        : null,
                                     child: info.uploader.avatar.px128.isEmpty
                                         ? const Icon(
                                             Icons.person,
@@ -266,19 +269,23 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
                                     final tag = info.tags[index];
                                     return GestureDetector(
                                       onTap: () {
-                                        final searchCubit = context.read<SearchCubit>();
+                                        final searchCubit = context
+                                            .read<SearchCubit>();
                                         searchCubit.fetchWallpaper(
-                                          wallQuery: searchCubit.state.wallQuery.copyWith(
-                                            query: tag.name,
-                                            page: 1,
-                                          ),
+                                          wallQuery: searchCubit.state.wallQuery
+                                              .copyWith(
+                                                query: tag.name,
+                                                page: 1,
+                                              ),
                                         );
-                                        Navigator.of(context).pushAndRemoveUntil(
-                                          MaterialPageRoute<void>(
-                                            builder: (_) => const NavigationBarPage(),
-                                          ),
-                                          (route) => false,
-                                        );
+                                        Navigator.of(context)
+                                            .pushAndRemoveUntil(
+                                              MaterialPageRoute<void>(
+                                                builder: (_) =>
+                                                    const NavigationBarPage(),
+                                              ),
+                                              (route) => false,
+                                            );
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
@@ -287,7 +294,9 @@ class _WallpaperDetailsPageState extends State<WallpaperDetailsPage> {
                                         ),
                                         decoration: BoxDecoration(
                                           color: Colors.white10,
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
                                           border: Border.all(
                                             color: Colors.white12,
                                           ),

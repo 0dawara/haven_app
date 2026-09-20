@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:haven_app/data/models/models.dart';
+import 'package:haven/data/models/models.dart';
 
 class Wallpaper extends Equatable {
   const Wallpaper({

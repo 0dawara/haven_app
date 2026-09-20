@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:haven_app/core/core.dart';
-import 'package:haven_app/data/models/models.dart';
-import 'package:haven_app/features/settings/cubit/settings_cubit.dart';
-import 'package:haven_app/features/wallpaper_search/cubit/search_cubit.dart';
+import 'package:haven/core/core.dart';
+import 'package:haven/data/models/models.dart';
+import 'package:haven/features/settings/cubit/settings_cubit.dart';
+import 'package:haven/features/wallpaper_search/cubit/search_cubit.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -66,7 +66,8 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: AppTheme.background,
       body: SafeArea(
         child: BlocConsumer<SearchCubit, SearchState>(
-          listenWhen: (previous, current) => previous.wallQuery.query != current.wallQuery.query,
+          listenWhen: (previous, current) =>
+              previous.wallQuery.query != current.wallQuery.query,
           listener: (context, state) {
             if (_textController.text != (state.wallQuery.query ?? '')) {
               _textController.text = state.wallQuery.query ?? '';

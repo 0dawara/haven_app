@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:haven_app/features/settings/cubit/settings_cubit.dart';
-import 'package:haven_app/features/wallpaper_search/cubit/search_cubit.dart';
+import 'package:haven/features/settings/cubit/settings_cubit.dart';
+import 'package:haven/features/wallpaper_search/cubit/search_cubit.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -51,13 +51,15 @@ class _SettingsPageState extends State<SettingsPage> {
   void clearKey() {
     _textController.clear();
     settingsCubit.clearApikey();
-    final purity =
-        List<bool>.from(searchCubit.state.wallQuery.purity ?? [true, false, false]);
+    final purity = List<bool>.from(
+      searchCubit.state.wallQuery.purity ?? [true, false, false],
+    );
     if (purity.length == 3) purity[2] = false;
     searchCubit.updateWallpaperQuery(
       searchCubit.state.wallQuery.copyWith(purity: purity, apikey: ''),
     );
   }
+
   @override
   void initState() {
     super.initState();
@@ -114,7 +116,9 @@ class _SettingsPageState extends State<SettingsPage> {
                               filled: true,
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _obscureKey ? Icons.visibility_off : Icons.visibility,
+                                  _obscureKey
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
                                   color: Colors.grey,
                                 ),
                                 onPressed: () {
@@ -160,11 +164,12 @@ class _SettingsPageState extends State<SettingsPage> {
                           foregroundColor: WidgetStateProperty.all<Color>(
                             Theme.of(context).colorScheme.onPrimary,
                           ),
-                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
+                          shape:
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
                           padding: WidgetStateProperty.all<EdgeInsets>(
                             const EdgeInsets.all(16),
                           ),

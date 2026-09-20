@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:haven_app/core/widgets/rounded_square_button.dart';
+import 'package:haven/core/widgets/rounded_square_button.dart';
 import 'package:share_plus/share_plus.dart';
 
 class DownloadedWallpaperPage extends StatefulWidget {

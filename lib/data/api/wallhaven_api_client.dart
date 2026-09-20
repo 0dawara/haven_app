@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:haven/data/api/logging_client.dart';
+import 'package:haven/data/models/models.dart';
 import 'package:http/http.dart' as http;
-
-import 'package:haven_app/data/api/logging_client.dart';
-import 'package:haven_app/data/models/models.dart';
 
 /// Exception thrown when wallpaperSearch fails.
 class WallpaperSearchRequestFailure implements Exception {

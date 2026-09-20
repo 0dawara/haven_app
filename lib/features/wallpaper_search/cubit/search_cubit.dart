@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
-import 'package:haven_app/core/core.dart';
-import 'package:haven_app/data/data.dart';
+import 'package:haven/core/core.dart';
+import 'package:haven/data/data.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:logging/logging.dart';
 
@@ -37,7 +37,6 @@ class SearchCubit extends HydratedCubit<SearchState> {
       }
     }
   }
-
 
   Map<String, int> getColorsData(List<Wallpaper> data) {
     final colorsMap = <String, int>{};

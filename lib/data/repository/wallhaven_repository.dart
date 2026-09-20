@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:haven_app/data/api/wallhaven_api_client.dart';
-import 'package:haven_app/data/models/models.dart';
+import 'package:haven/data/api/wallhaven_api_client.dart';
+import 'package:haven/data/models/models.dart';
 
 class WallhavenRepository {
   WallhavenRepository({WallhavenApiClient? wallhavenApiClient})

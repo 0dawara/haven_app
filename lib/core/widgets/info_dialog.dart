@@ -4,11 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:haven/core/core.dart';
+import 'package:haven/data/data.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'package:haven_app/core/core.dart';
-import 'package:haven_app/data/data.dart';
 
 class InfoDialog extends StatelessWidget {
   InfoDialog({required this.wallpaper, super.key});

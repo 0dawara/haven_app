@@ -3,8 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
 
-import 'package:haven_app/data/models/models.dart';
-import 'package:haven_app/data/api/wallhaven_api_client.dart';
+import 'package:haven/data/models/models.dart';
+import 'package:haven/data/api/wallhaven_api_client.dart';
 
 class MockHttpClient extends Mock implements http.Client {}
 

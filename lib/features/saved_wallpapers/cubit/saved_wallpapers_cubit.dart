@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
-import 'package:haven_app/data/repository/wallpaper_storage.dart';
-import 'package:haven_app/features/saved_wallpapers/cubit/saved_wallpapers_state.dart';
+import 'package:haven/data/repository/wallpaper_storage.dart';
+import 'package:haven/features/saved_wallpapers/cubit/saved_wallpapers_state.dart';
 import 'package:logging/logging.dart';
 
 class SavedWallpapersCubit extends Cubit<SavedWallpapersState> {
