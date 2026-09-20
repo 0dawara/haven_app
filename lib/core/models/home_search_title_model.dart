@@ -1,63 +1,81 @@
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:haven_app/core/utils/color_extension.dart';
-import 'package:haven_app/core/utils/icondata_extension.dart';
+
+enum HomeSearchTitleVariant {
+  toplist(Icons.diamond_outlined, Colors.purple, 'Best of the month'),
+  latest(Icons.schedule_outlined, Colors.green, 'Latest'),
+  hot(Icons.local_fire_department_outlined, Colors.red, 'Hot'),
+  random(Icons.shuffle_outlined, Colors.orange, 'Random'),
+  search(Icons.search, Colors.grey, '');
+
+  const HomeSearchTitleVariant(this.icon, this.color, this.defaultTitle);
+
+  final IconData icon;
+  final Color color;
+  final String defaultTitle;
+}
 
 class HomeSearchTitleModel extends Equatable {
   const HomeSearchTitleModel({
-    required this.icon,
-    required this.iconColor,
+    required this.variant,
     required this.searchTitle,
   });
 
   factory HomeSearchTitleModel.fromJson(Map<String, dynamic> json) {
-    return HomeSearchTitleModel(
-      icon: IconSerialization.fromJson(json['icon'] as Map<String, dynamic>),
-      iconColor: HexColor.fromHex(json['iconColor'] as String),
-      searchTitle: json['searchTitle'] as String,
-    );
+    final searchTitle =
+        json['searchTitle'] as String? ??
+        HomeSearchTitleVariant.toplist.defaultTitle;
+    final variantName = json['variant'] as String?;
+    final variant =
+        HomeSearchTitleVariant.values.firstWhereOrNull(
+          (variant) => variant.name == variantName,
+        ) ??
+        HomeSearchTitleVariant.values.firstWhereOrNull(
+          (variant) => variant.defaultTitle == searchTitle,
+        ) ??
+        HomeSearchTitleVariant.search;
+
+    return HomeSearchTitleModel(variant: variant, searchTitle: searchTitle);
   }
 
   const HomeSearchTitleModel.toplist()
-    : icon = Icons.diamond_outlined,
-      iconColor = Colors.purple,
+    : variant = HomeSearchTitleVariant.toplist,
       searchTitle = 'Best of the month';
 
   const HomeSearchTitleModel.latest()
-    : icon = Icons.schedule_outlined,
-      iconColor = Colors.green,
+    : variant = HomeSearchTitleVariant.latest,
       searchTitle = 'Latest';
 
   const HomeSearchTitleModel.hot()
-    : icon = Icons.local_fire_department_outlined,
-      iconColor = Colors.red,
+    : variant = HomeSearchTitleVariant.hot,
       searchTitle = 'Hot';
 
   const HomeSearchTitleModel.random()
-    : icon = Icons.shuffle_outlined,
-      iconColor = Colors.orange,
+    : variant = HomeSearchTitleVariant.random,
       searchTitle = 'Random';
 
   const HomeSearchTitleModel.search(String query)
-    : icon = Icons.search,
-      iconColor = Colors.grey,
+    : variant = HomeSearchTitleVariant.search,
       searchTitle = query;
 
-  final IconData icon;
-  final Color iconColor;
+  final HomeSearchTitleVariant variant;
   final String searchTitle;
 
+  IconData get icon => variant.icon;
+
+  Color get iconColor => variant.color;
+
   Map<String, dynamic> toJson() => {
-    'icon': icon.toJson(),
-    'iconColor': iconColor.toHex(),
+    'variant': variant.name,
     'searchTitle': searchTitle,
   };
 
   @override
-  List<Object?> get props => [icon, iconColor, searchTitle];
+  List<Object?> get props => [variant, searchTitle];
 
   @override
   String toString() {
-    return 'HomeSearchTitleModel(icon: $icon, iconColor: $iconColor, searchTitle: $searchTitle)';
+    return 'HomeSearchTitleModel(variant: ${variant.name}, searchTitle: $searchTitle)';
   }
 }

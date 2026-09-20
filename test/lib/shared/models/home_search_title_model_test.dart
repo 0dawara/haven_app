@@ -1,40 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:haven_app/core/models/home_search_title_model.dart';
+import 'package:haven/core/models/home_search_title_model.dart';
 
 void main() {
   group('HomeSearchTitleModel', () {
-    test('fromJson should correctly deserialize', () {
-      final json = {
-        'icon': {
-          'codePoint': 984551,
-          'fontFamily': 'MaterialIcons',
-          'fontPackage': null,
-        },
-        'iconColor': '#ff9c27b0',
-        'searchTitle': 'Best of the month',
-      };
+    test('fromJson restores the persisted variant', () {
+      final model = HomeSearchTitleModel.fromJson({
+        'variant': 'hot',
+        'searchTitle': 'Hot',
+      });
 
-      final model = HomeSearchTitleModel.fromJson(json);
-
-      expect(model.searchTitle, 'Best of the month');
-      expect(model.icon.codePoint, 984551);
-      expect(model.icon.fontFamily, 'MaterialIcons');
-      expect(model.iconColor, const Color(0xff9c27b0));
+      expect(model.variant, HomeSearchTitleVariant.hot);
+      expect(model.searchTitle, 'Hot');
+      expect(model.icon, Icons.local_fire_department_outlined);
+      expect(model.iconColor, Colors.red);
     });
 
-    test('toJson should correctly serialize', () {
-      const model = HomeSearchTitleModel(
-        icon: Icons.diamond_outlined,
-        iconColor: Colors.purple,
-        searchTitle: 'Best of the month',
-      );
+    test('fromJson maps legacy payloads without a variant by title', () {
+      final legacy = HomeSearchTitleModel.fromJson({
+        'icon': {'codePoint': 984551, 'fontFamily': 'MaterialIcons'},
+        'iconColor': '#ff9c27b0',
+        'searchTitle': 'Best of the month',
+      });
 
-      final json = model.toJson();
+      expect(legacy.variant, HomeSearchTitleVariant.toplist);
 
-      expect(json['searchTitle'], 'Best of the month');
-      expect(json['icon']['codePoint'], Icons.diamond_outlined.codePoint);
-      expect(json['iconColor'], '#ff9c27b0');
+      final legacyQuery = HomeSearchTitleModel.fromJson({
+        'icon': {'codePoint': 57669, 'fontFamily': 'MaterialIcons'},
+        'iconColor': '#ff9e9e9e',
+        'searchTitle': 'anime',
+      });
+
+      expect(legacyQuery.variant, HomeSearchTitleVariant.search);
+      expect(legacyQuery.searchTitle, 'anime');
+    });
+
+    test('toJson round-trips through fromJson', () {
+      const model = HomeSearchTitleModel.search('nature');
+
+      expect(model.toJson(), {'variant': 'search', 'searchTitle': 'nature'});
+      expect(HomeSearchTitleModel.fromJson(model.toJson()), model);
     });
   });
 }
