@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:haven_app/app/app.dart';
-import 'package:haven_app/wallhaven/wallhaven.dart';
+import 'package:haven/core/core.dart';
+import 'package:haven/data/api/logging_client.dart';
+import 'package:haven/data/data.dart';
+import 'package:haven/features/navigation/view/navigation_bar_page.dart';
+import 'package:haven/features/saved_wallpapers/cubit/saved_wallpapers_cubit.dart';
+import 'package:haven/features/settings/cubit/settings_cubit.dart';
+import 'package:haven/features/wallpaper_actions/cubit/actions_cubit.dart';
+import 'package:haven/features/wallpaper_details/cubit/details_cubit.dart';
+import 'package:haven/features/wallpaper_search/cubit/search_cubit.dart';
+import 'package:http/http.dart' as http;
 
 class HavenApp extends StatelessWidget {
   const HavenApp({required this.wallhavenRepository, super.key});
@@ -14,8 +20,19 @@ class HavenApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
       value: wallhavenRepository,
-      child: BlocProvider(
-        create: (_) => WallpaperCubit(wallhavenRepository),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => SearchCubit(wallhavenRepository)),
+          BlocProvider(create: (_) => DetailsCubit(wallhavenRepository)),
+          BlocProvider(create: (_) => SettingsCubit(wallhavenRepository)),
+          BlocProvider(
+            create: (_) => SavedWallpapersCubit()..fetchWallpapers(),
+          ),
+          RepositoryProvider(
+            create: (_) =>
+                ActionsCubit(httpClient: LoggingClient(http.Client())),
+          ),
+        ],
         child: const HavenAppView(),
       ),
     );
@@ -28,10 +45,7 @@ class HavenAppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.cyan),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.themeData,
       home: const NavigationBarPage(),
     );
   }

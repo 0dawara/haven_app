@@ -1,6 +1,6 @@
 {
-    "name": "haven_app",
-    "short_name": "haven_app",
+    "name": "haven",
+    "short_name": "haven",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

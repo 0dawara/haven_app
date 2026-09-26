@@ -24,6 +24,9 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Install Android SDK Platform 37
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0" "build-tools;37.0.0"
+
       - name: Get dependencies
         run: flutter pub get
 
@@ -63,7 +66,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: haven-app-windows
-          path: build/windows/runner/Release/Haven App.msix
+          path: build/windows/x64/runner/Release/haven.msix
 
   create_release:
     name: Create Release
@@ -79,5 +82,5 @@ jobs:
         with:
           files: |
             haven-app-android/haven-app-android.apk
-            haven-app-windows/Haven App.msix
+            haven-app-windows/haven.msix
           generate_release_notes: true

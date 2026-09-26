@@ -1,0 +1,67 @@
+import 'dart:async';
+
+import 'package:equatable/equatable.dart';
+import 'package:haven/core/core.dart';
+import 'package:haven/data/data.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:logging/logging.dart';
+
+part 'search_state.dart';
+
+class SearchCubit extends HydratedCubit<SearchState> {
+  SearchCubit(this._wallhavenRepository) : super(const SearchState());
+
+  final WallhavenRepository _wallhavenRepository;
+  static final _logger = Logger('SearchCubit');
+
+  Future<void> fetchWallpaper({WallpaperQuery? wallQuery}) async {
+    if (state.status != SearchStatus.loading) {
+      emit(state.copyWith(status: SearchStatus.loading));
+
+      try {
+        final wallpaperList = await _wallhavenRepository.getWallpaper(
+          wallQuery: wallQuery,
+        );
+
+        emit(
+          state.copyWith(
+            status: SearchStatus.success,
+            wallpaperList: wallpaperList,
+            colorsData: getColorsData(wallpaperList.data),
+            wallQuery: wallQuery,
+          ),
+        );
+      } catch (e, s) {
+        _logger.severe('Failed to fetch wallpapers', e, s);
+        emit(state.copyWith(status: SearchStatus.failure));
+      }
+    }
+  }
+
+  Map<String, int> getColorsData(List<Wallpaper> data) {
+    final colorsMap = <String, int>{};
+
+    for (final wallpaper in data) {
+      for (final color in wallpaper.colors) {
+        colorsMap[color] = (colorsMap[color] ?? 0) + 1;
+      }
+    }
+
+    return colorsMap;
+  }
+
+  void updateStatus(SearchStatus status) =>
+      emit(state.copyWith(status: status));
+
+  void updateWallpaperQuery(WallpaperQuery wallQuery) =>
+      emit(state.copyWith(wallQuery: wallQuery));
+
+  void updateHomeSearchTitleModel(HomeSearchTitleModel titleModel) =>
+      emit(state.copyWith(homeSearchTitleModel: titleModel));
+
+  @override
+  SearchState fromJson(Map<String, dynamic> json) => SearchState.fromJson(json);
+
+  @override
+  Map<String, dynamic> toJson(SearchState state) => state.toJson();
+}
