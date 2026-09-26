@@ -47,5 +47,15 @@ void main() {
         );
       });
     });
+
+    test('fromJson(toJson()) round-trip equality', () {
+      const avatar = Avatar(
+        px200: 'https://example.com/200.jpg',
+        px128: 'https://example.com/128.jpg',
+        px32: 'https://example.com/32.jpg',
+        px20: 'https://example.com/20.jpg',
+      );
+      expect(Avatar.fromJson(avatar.toJson()), equals(avatar));
+    });
   });
 }
