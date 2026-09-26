@@ -1,10 +1,10 @@
 export 'avatar.dart';
+export 'download_update.dart';
 export 'meta.dart';
 export 'tag.dart';
 export 'thumbs.dart';
 export 'uploader.dart';
 export 'user_settings.dart';
 export 'wallpaper.dart';
-export 'wallpaper_info.dart';
 export 'wallpaper_list.dart';
 export 'wallpaper_query.dart';

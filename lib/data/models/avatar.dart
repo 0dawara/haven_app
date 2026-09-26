@@ -27,10 +27,10 @@ class Avatar extends Equatable {
       'Avatar(px200: $px200, px128: $px128, px32: $px32, px20: $px20)';
 
   Map<String, dynamic> toJson() => {
-    'px200': px200,
-    'px128': px128,
-    'px32': px32,
-    'px20': px20,
+    '200px': px200,
+    '128px': px128,
+    '32px': px32,
+    '20px': px20,
   };
 
   @override

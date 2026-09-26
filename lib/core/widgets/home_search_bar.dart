@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:haven/l10n/l10n.dart';
 
 class HomeSearchBar extends StatefulWidget {
   const HomeSearchBar({
@@ -36,7 +37,7 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
                 textAlignVertical: TextAlignVertical.center,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  hintText: 'Search wallpapers, tags...',
+                  hintText: context.l10n.searchHint,
                   hintStyle: const TextStyle(color: Colors.white38),
                   border: InputBorder.none,
                   focusedBorder: InputBorder.none,
@@ -46,6 +47,7 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
                   suffixIcon: widget.textController.text.isEmpty
                       ? null
                       : IconButton(
+                          tooltip: context.l10n.tooltipClearSearch,
                           icon: const Icon(Icons.close, color: Colors.white54),
                           onPressed: () {
                             widget.textController.clear();
@@ -62,6 +64,7 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
             ),
             const VerticalDivider(width: 1, color: Colors.white24),
             IconButton(
+              tooltip: context.l10n.tooltipSearch,
               icon: const Icon(CupertinoIcons.search),
               color: Colors.grey,
               onPressed: widget.onSearchPressed,

@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:haven/core/widgets/rounded_square_button.dart';
+import 'package:haven/l10n/l10n.dart';
 import 'package:share_plus/share_plus.dart';
 
 class DownloadedWallpaperPage extends StatefulWidget {
@@ -37,18 +39,20 @@ class _DownloadedWallpaperPageState extends State<DownloadedWallpaperPage> {
             top: 48,
             left: 16,
             child: IconButton(
+              tooltip: context.l10n.tooltipBack,
               icon: const Icon(CupertinoIcons.back),
               color: Colors.white,
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.all(Colors.white24),
               ),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => context.pop(),
             ),
           ),
           Positioned(
             top: 48,
             right: 16,
             child: IconButton(
+              tooltip: context.l10n.tooltipToggleFit,
               icon: const Icon(Icons.aspect_ratio_outlined),
               color: Colors.white,
               style: ButtonStyle(
@@ -67,7 +71,7 @@ class _DownloadedWallpaperPageState extends State<DownloadedWallpaperPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 RoundedSquareButton(
-                  name: 'Share',
+                  name: context.l10n.actionShare,
                   icon: CupertinoIcons.share,
                   action: () => SharePlus.instance.share(
                     ShareParams(files: [XFile(widget.file.path)]),

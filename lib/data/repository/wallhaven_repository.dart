@@ -8,29 +8,23 @@ class WallhavenRepository {
     : _wallhavenApiClient = wallhavenApiClient ?? WallhavenApiClient();
 
   final WallhavenApiClient _wallhavenApiClient;
+  String? _apiKey;
 
-  Future<WallpaperList> getWallpaper({WallpaperQuery? wallQuery}) async {
-    final wallpaperList = await _wallhavenApiClient.wallpaperSearch(
-      wallQuery: wallQuery,
-    );
-    return wallpaperList;
+  bool get hasApiKey => _apiKey?.isNotEmpty ?? false;
+
+  void updateApiKey(String? apiKey) {
+    _apiKey = apiKey;
   }
 
-  Future<WallpaperInfo> getWallpaperInfo({
-    required String id,
-    String? apikey,
-  }) async {
-    final wallpaper = await _wallhavenApiClient.wallpaperInfo(
-      id: id,
-      apikey: apikey,
-    );
-    return wallpaper;
+  Future<WallpaperList> searchWallpapers(WallpaperQuery query) async {
+    return _wallhavenApiClient.searchWallpapers(query, apiKey: _apiKey);
   }
 
-  Future<UserSettings> apikeyValidation({required String apikey}) async {
-    final userSettings = await _wallhavenApiClient.apikeyValidation(
-      apikey: apikey,
-    );
-    return userSettings;
+  Future<Wallpaper> getWallpaper(String id) async {
+    return _wallhavenApiClient.getWallpaper(id, apiKey: _apiKey);
+  }
+
+  Future<UserSettings> validateApiKey(String apiKey) async {
+    return _wallhavenApiClient.getUserSettings(apiKey: apiKey);
   }
 }

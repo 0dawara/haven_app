@@ -6,8 +6,12 @@ on:
       - "v*"
 
 jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
   build_android:
     name: Build Android
+    needs: [ci]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -44,6 +48,7 @@ jobs:
 
   build_windows:
     name: Build Windows
+    needs: [ci]
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4

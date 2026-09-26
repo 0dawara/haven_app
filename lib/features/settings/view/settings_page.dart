@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:haven/features/settings/cubit/settings_cubit.dart';
-import 'package:haven/features/wallpaper_search/cubit/search_cubit.dart';
+import 'package:haven/l10n/l10n.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -13,52 +13,10 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   SettingsCubit get settingsCubit => context.read<SettingsCubit>();
-  SearchCubit get searchCubit => context.read<SearchCubit>();
 
   final _textController = TextEditingController();
   bool _obscureKey = true;
 
-  Future<void> apikeyValidation() async {
-    final value = _textController.text;
-
-    await settingsCubit.validateApikey(value);
-
-    if (settingsCubit.state.userStatus == UserStatus.success) {
-      final purity =
-          searchCubit.state.wallQuery.purity?.toList() ?? [true, false, null];
-
-      if (purity.last == null) {
-        purity.last = false;
-      }
-
-      searchCubit.updateWallpaperQuery(
-        searchCubit.state.wallQuery.copyWith(purity: purity, apikey: value),
-      );
-    } else {
-      final purity =
-          searchCubit.state.wallQuery.purity?.toList() ?? [true, false, null];
-
-      if (purity.last != null) {
-        purity.last = null;
-      }
-
-      searchCubit.updateWallpaperQuery(
-        searchCubit.state.wallQuery.copyWith(purity: purity, apikey: ''),
-      );
-    }
-  }
-
-  void clearKey() {
-    _textController.clear();
-    settingsCubit.clearApikey();
-    final purity = List<bool>.from(
-      searchCubit.state.wallQuery.purity ?? [true, false, false],
-    );
-    if (purity.length == 3) purity[2] = false;
-    searchCubit.updateWallpaperQuery(
-      searchCubit.state.wallQuery.copyWith(purity: purity, apikey: ''),
-    );
-  }
 
   @override
   void initState() {
@@ -80,18 +38,21 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(left: 16, top: 64),
+            Padding(
+              padding: const EdgeInsets.only(left: 16, top: 64),
               child: Text(
-                'Settings',
-                style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                context.l10n.settingsTitle,
+                style: const TextStyle(
+                  fontSize: 50,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.only(left: 16, top: 8),
+            Padding(
+              padding: const EdgeInsets.only(left: 16, top: 8),
               child: Text(
-                'Insert your API key here',
-                style: TextStyle(fontSize: 20, color: Colors.grey),
+                context.l10n.settingsSubtitle,
+                style: const TextStyle(fontSize: 20, color: Colors.grey),
               ),
             ),
             Flexible(
@@ -106,7 +67,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           child: TextField(
                             controller: _textController,
                             decoration: InputDecoration(
-                              hintText: 'API key',
+                              hintText: context.l10n.settingsApiKeyHint,
                               border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(16),
@@ -115,6 +76,9 @@ class _SettingsPageState extends State<SettingsPage> {
                               fillColor: Colors.white,
                               filled: true,
                               suffixIcon: IconButton(
+                                tooltip: _obscureKey
+                                    ? context.l10n.tooltipShowKey
+                                    : context.l10n.tooltipHideKey,
                                 icon: Icon(
                                   _obscureKey
                                       ? Icons.visibility_off
@@ -136,6 +100,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                         ),
                         IconButton(
+                          tooltip: context.l10n.tooltipPaste,
                           onPressed: () async {
                             final data = await Clipboard.getData('text/plain');
                             if (data != null && data.text != null) {
@@ -147,7 +112,11 @@ class _SettingsPageState extends State<SettingsPage> {
                           icon: const Icon(Icons.paste_outlined),
                         ),
                         IconButton(
-                          onPressed: clearKey,
+                          tooltip: context.l10n.tooltipClear,
+                          onPressed: () {
+                            _textController.clear();
+                            settingsCubit.clearApikey();
+                          },
                           icon: const Icon(Icons.clear),
                         ),
                       ],
@@ -156,7 +125,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     SizedBox(
                       width: double.infinity,
                       child: TextButton(
-                        onPressed: () async => apikeyValidation(),
+                        onPressed: () =>
+                            settingsCubit.validateApikey(_textController.text),
                         style: ButtonStyle(
                           backgroundColor: WidgetStateProperty.all<Color>(
                             Theme.of(context).colorScheme.primary,
@@ -174,7 +144,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             const EdgeInsets.all(16),
                           ),
                         ),
-                        child: const Text('Validate'),
+                        child: Text(context.l10n.settingsValidate),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -182,26 +152,36 @@ class _SettingsPageState extends State<SettingsPage> {
                       builder: (context, state) {
                         switch (state.userStatus) {
                           case UserStatus.initial:
-                            return Container();
+                            return const SizedBox.shrink();
                           case UserStatus.loading:
                             return const Center(
                               child: CircularProgressIndicator.adaptive(),
                             );
                           case UserStatus.failure:
-                            return const Center(
+                            return Center(
                               child: Text(
-                                'Apikey is not valid',
-                                style: TextStyle(
+                                context.l10n.settingsKeyInvalid,
+                                style: const TextStyle(
                                   color: Colors.red,
                                   fontSize: 16,
                                 ),
                               ),
                             );
-                          case UserStatus.success:
-                            return const Center(
+                          case UserStatus.unavailable:
+                            return Center(
                               child: Text(
-                                "You're good to go!",
-                                style: TextStyle(
+                                context.l10n.settingsUnavailable,
+                                style: const TextStyle(
+                                  color: Colors.orange,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            );
+                          case UserStatus.success:
+                            return Center(
+                              child: Text(
+                                context.l10n.settingsKeyValid,
+                                style: const TextStyle(
                                   color: Colors.green,
                                   fontSize: 16,
                                 ),

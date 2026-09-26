@@ -12,21 +12,19 @@ class AppTheme {
   static const Color textPrimary = Colors.white;
   static const Color textSecondary = Colors.white70;
 
-  static ThemeData get themeData {
-    return ThemeData(
-      useMaterial3: true,
-      scaffoldBackgroundColor: background,
-      primaryColor: primaryPurple,
-      colorScheme: const ColorScheme.dark(
-        primary: primaryPurple,
-        surface: cardColor,
-        onSurface: textPrimary,
-      ),
-      iconTheme: const IconThemeData(color: textPrimary),
-      textTheme: const TextTheme(
-        bodyMedium: TextStyle(color: textPrimary),
-        titleMedium: TextStyle(color: textPrimary, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
+  static final ThemeData themeData = ThemeData(
+    useMaterial3: true,
+    scaffoldBackgroundColor: background,
+    primaryColor: primaryPurple,
+    colorScheme: const ColorScheme.dark(
+      primary: primaryPurple,
+      surface: cardColor,
+      onSurface: textPrimary,
+    ),
+    iconTheme: const IconThemeData(color: textPrimary),
+    textTheme: const TextTheme(
+      bodyMedium: TextStyle(color: textPrimary),
+      titleMedium: TextStyle(color: textPrimary, fontWeight: FontWeight.bold),
+    ),
+  );
 }

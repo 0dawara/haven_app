@@ -2,42 +2,43 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:haven/app_router.dart';
 import 'package:haven/features/saved_wallpapers/cubit/saved_wallpapers_cubit.dart';
 import 'package:haven/features/saved_wallpapers/cubit/saved_wallpapers_state.dart';
-import 'package:haven/features/saved_wallpapers/view/downloaded_wallpaper_page.dart';
+import 'package:haven/l10n/l10n.dart';
 
 class SavePage extends StatelessWidget {
   const SavePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final mediaSize = MediaQuery.of(context).size;
     return BlocBuilder<SavedWallpapersCubit, SavedWallpapersState>(
       builder: (context, state) {
         final wallpapers = state is SavedWallpapersSuccess
             ? state.wallpapers
-            : <FileSystemEntity>[];
-
+            : <File>[];
         return Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 1200),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(left: 16, top: 64),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, top: 64),
                   child: Text(
-                    'Saved',
-                    style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                    context.l10n.savedTitle,
+                    style: const TextStyle(
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 if (wallpapers.isNotEmpty) ...[
                   Padding(
                     padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
                     child: Text(
-                      wallpapers.length > 1
-                          ? '${wallpapers.length} wallpapers that you saved'
-                          : 'A wallpaper you saved',
+                      context.l10n.savedCount(wallpapers.length),
                       style: const TextStyle(fontSize: 20, color: Colors.grey),
                     ),
                   ),
@@ -56,34 +57,27 @@ class SavePage extends StatelessWidget {
                               Radius.circular(15),
                             ),
                             child: GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        DownloadedWallpaperPage(
-                                          file: File(wallpapers[index].path),
-                                        ),
-                                  ),
-                                );
-                              },
+                              onTap: () => context.push(
+                                AppRoutes.savedFile(wallpapers[index].path),
+                              ),
                               child: Image.file(
-                                File(wallpapers[index].path),
+                                wallpapers[index],
                                 filterQuality: FilterQuality.high,
                                 fit: BoxFit.cover,
+                                cacheWidth: (240 *
+                                        MediaQuery.devicePixelRatioOf(context))
+                                    .round(),
                               ),
                             ),
                           );
                         },
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: mediaSize.width > 1200
-                              ? 5
-                              : mediaSize.width > 800
-                              ? 4
-                              : 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          mainAxisExtent: mediaSize.height / 3,
-                        ),
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 240,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: 0.7,
+                            ),
                       ),
                     ),
                   ),
@@ -92,8 +86,8 @@ class SavePage extends StatelessWidget {
                     padding: const EdgeInsets.only(left: 16, top: 8),
                     child: Text(
                       state is SavedWallpapersLoading
-                          ? "Loading wallpapers..."
-                          : "Can't find any saved wallpaper",
+                          ? context.l10n.savedLoading
+                          : context.l10n.savedEmpty,
                       style: const TextStyle(fontSize: 20, color: Colors.grey),
                     ),
                   ),

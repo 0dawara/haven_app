@@ -1,14 +1,19 @@
 part of 'settings_cubit.dart';
 
-enum UserStatus { initial, loading, success, failure }
+enum UserStatus { initial, loading, success, failure, unavailable }
 
 class SettingsState extends Equatable {
   const SettingsState({this.userStatus = UserStatus.initial, this.apikey = ''});
 
-  factory SettingsState.fromJson(Map<String, dynamic> json) => SettingsState(
-    userStatus: UserStatus.values[json['userStatus'] as int? ?? 0],
-    apikey: json['apikey'] as String? ?? '',
-  );
+  factory SettingsState.fromJson(Map<String, dynamic> json) {
+    final status =
+        (json['userStatus'] == 'success' || json['userStatus'] == 2)
+            ? UserStatus.success
+            : UserStatus.initial;
+    final apikey =
+        status == UserStatus.success ? (json['apikey'] as String? ?? '') : '';
+    return SettingsState(userStatus: status, apikey: apikey);
+  }
 
   final UserStatus userStatus;
   final String apikey;
@@ -21,7 +26,7 @@ class SettingsState extends Equatable {
   }
 
   Map<String, dynamic> toJson() => {
-    'userStatus': userStatus.index,
+    'userStatus': userStatus.name,
     'apikey': apikey,
   };
 

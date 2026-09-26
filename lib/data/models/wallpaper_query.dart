@@ -1,5 +1,5 @@
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
-
 enum WallpaperSorting {
   latest,
   relevance,
@@ -43,53 +43,64 @@ enum WallpaperTopRange {
 
 class WallpaperQuery extends Equatable {
   const WallpaperQuery({
-    this.query,
+    this.query = '',
     this.category = const [true, true, false],
-    this.purity = const [true, false, null],
+    this.purity = const [true, false, false],
     this.sorting = WallpaperSorting.toplist,
     this.order = WallpaperOrder.desc,
     this.topRange = WallpaperTopRange.month,
-    this.page,
-    this.apikey,
+    this.page = 1,
   });
 
   factory WallpaperQuery.fromJson(Map<String, dynamic> json) => WallpaperQuery(
-    query: json['q'] as String?,
-    category: List<bool>.from(
-      (json['categories'] as String).split('').map((e) => e == '1'),
-    ),
-    purity: List<bool?>.from(
-      (json['purity'] as String).split('').map((e) => e == '1'),
-    ),
-    sorting: WallpaperSorting.values.firstWhere(
-      (e) => e.name == json['sorting'],
-    ),
-    order: WallpaperOrder.values.firstWhere((e) => e.name == json['order']),
-    topRange: WallpaperTopRange.values.firstWhere(
-      (e) => e.value == json['topRange'],
-    ),
-    page: json['page'] as int?,
-    apikey: json['apikey'] as String?,
+    query: switch (json['q'] ?? json['query']) {
+      final String q => q,
+      _ => '',
+    },
+    category: _parseBits(json['categories'], const [true, true, false]),
+    purity: _parseBits(json['purity'], const [true, false, false]),
+    sorting:
+        WallpaperSorting.values.asNameMap()[json['sorting']] ??
+        WallpaperSorting.toplist,
+    order:
+        WallpaperOrder.values.asNameMap()[json['order']] ?? WallpaperOrder.desc,
+    topRange:
+        WallpaperTopRange.values.firstWhereOrNull(
+          (e) => e.value == json['topRange'],
+        ) ??
+        WallpaperTopRange.month,
+    page: switch (json['page']) {
+      final int p => p,
+      final String s => int.tryParse(s) ?? 1,
+      _ => 1,
+    },
   );
 
-  final String? query;
-  final List<bool>? category;
-  final List<bool?>? purity;
-  final WallpaperSorting? sorting;
-  final WallpaperOrder? order;
-  final WallpaperTopRange? topRange;
-  final int? page;
-  final String? apikey;
+  static List<bool> _parseBits(dynamic value, List<bool> fallback) {
+    if (value is String &&
+        value.length == 3 &&
+        value.split('').every((c) => c == '0' || c == '1')) {
+      return value.split('').map((c) => c == '1').toList();
+    }
+    return fallback;
+  }
+
+  final String query;
+  final List<bool> category;
+  final List<bool> purity;
+  final WallpaperSorting sorting;
+  final WallpaperOrder order;
+  final WallpaperTopRange topRange;
+  final int page;
 
   WallpaperQuery copyWith({
     String? query,
     List<bool>? category,
-    List<bool?>? purity,
+    List<bool>? purity,
     WallpaperSorting? sorting,
     WallpaperOrder? order,
     WallpaperTopRange? topRange,
     int? page,
-    String? apikey,
   }) => WallpaperQuery(
     query: query ?? this.query,
     category: category ?? this.category,
@@ -98,21 +109,26 @@ class WallpaperQuery extends Equatable {
     order: order ?? this.order,
     topRange: topRange ?? this.topRange,
     page: page ?? this.page,
-    apikey: apikey ?? this.apikey,
   );
 
+  Map<String, String> toQueryParameters() => {
+    if (query.isNotEmpty) 'q': query,
+    'categories': category.map((e) => e ? '1' : '0').join(),
+    'purity': purity.map((e) => e ? '1' : '0').join(),
+    'sorting': sorting.name,
+    'order': order.name,
+    if (sorting == WallpaperSorting.toplist) 'topRange': topRange.value,
+    'page': '$page',
+  };
+
   Map<String, dynamic> toJson() => {
-    if (query != null && query!.isNotEmpty) 'q': query,
-    if (category != null && category!.length == 3)
-      'categories': category!.map((e) => e ? '1' : '0').join(),
-    if (purity != null && purity!.length == 3)
-      'purity': purity!.map((e) => e != null && e ? '1' : '0').join(),
-    if (sorting != null) 'sorting': sorting!.name,
-    if (order != null) 'order': order!.name,
-    if (topRange != null && sorting == WallpaperSorting.toplist)
-      'topRange': topRange!.value,
-    if (page != null) 'page': page.toString(),
-    if (apikey != null && apikey!.isNotEmpty) 'apikey': apikey,
+    'q': query,
+    'categories': category.map((e) => e ? '1' : '0').join(),
+    'purity': purity.map((e) => e ? '1' : '0').join(),
+    'sorting': sorting.name,
+    'order': order.name,
+    'topRange': topRange.value,
+    'page': page,
   };
 
   @override
@@ -124,6 +140,5 @@ class WallpaperQuery extends Equatable {
     order,
     topRange,
     page,
-    apikey,
   ];
 }

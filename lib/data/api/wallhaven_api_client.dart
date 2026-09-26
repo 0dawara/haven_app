@@ -5,123 +5,125 @@ import 'package:haven/data/api/logging_client.dart';
 import 'package:haven/data/models/models.dart';
 import 'package:http/http.dart' as http;
 
-/// Exception thrown when wallpaperSearch fails.
-class WallpaperSearchRequestFailure implements Exception {
-  const WallpaperSearchRequestFailure(this.message);
-
+/// Base exception for Wallhaven API operations.
+sealed class WallhavenException implements Exception {
+  const WallhavenException(this.message);
   final String message;
 
   @override
-  String toString() => 'WallpaperSearchRequestFailure(message: $message)';
+  String toString() => '$runtimeType(message: $message)';
 }
 
-/// Exception thrown when the provided wallpaper is not found.
-class WallpaperNotFoundFailure implements Exception {
-  const WallpaperNotFoundFailure(this.message);
-
-  final String message;
-
-  @override
-  String toString() => 'WallpaperNotFoundFailure(message: $message)';
+final class WallhavenRequestFailure extends WallhavenException {
+  const WallhavenRequestFailure(this.statusCode)
+      : super('Request failed with status: $statusCode');
+  final int statusCode;
 }
 
-/// Exception thrown when the provided wallpaper id info is not found.
-class WallpaperIdInfoNotFoundFailure implements Exception {
-  const WallpaperIdInfoNotFoundFailure(this.message);
-
-  final String message;
-
-  @override
-  String toString() => 'WallpaperIdInfoNotFoundFailure(message: $message)';
+final class WallhavenRateLimitFailure extends WallhavenException {
+  const WallhavenRateLimitFailure() : super('Rate limit exceeded');
 }
 
-/// Exception thrown when the provided wallhaven apikey is not valid.
-class WallhavenApikeyNotValidFailure implements Exception {
-  const WallhavenApikeyNotValidFailure(this.message);
+final class WallhavenNotFoundFailure extends WallhavenException {
+  const WallhavenNotFoundFailure(super.message);
+}
 
-  final String message;
-
-  @override
-  String toString() => 'WallhavenApikeyNotValidFailure(message: $message)';
+final class WallhavenInvalidApiKeyFailure extends WallhavenException {
+  const WallhavenInvalidApiKeyFailure() : super('API key is not valid');
 }
 
 /// {@template wallhaven_api_client}
 /// Dart API Client which wraps the [wallhaven](https://wallhaven.cc/).
 /// {@endtemplate}
 class WallhavenApiClient {
-  /// {@macro open_meteo_api_client}
+  /// {@macro wallhaven_api_client}
   WallhavenApiClient({http.Client? httpClient})
-    : _httpClient = httpClient ?? LoggingClient(http.Client());
+      : _httpClient = httpClient ?? LoggingClient(http.Client());
 
   static const _baseUrl = 'wallhaven.cc';
+  static const requestTimeout = Duration(seconds: 20);
 
   final http.Client _httpClient;
 
-  /// Finds a [Wallpaper]. (Default: `/search?sorting=toplist`)
-  Future<WallpaperList> wallpaperSearch({WallpaperQuery? wallQuery}) async {
-    final queryParameters = wallQuery == null
-        ? {'sorting': 'toplist'}
-        : wallQuery.toJson();
-
-    final request = Uri.https(_baseUrl, '/api/v1/search', queryParameters);
-
-    final response = await _httpClient.get(request);
-
-    if (response.statusCode != 200) {
-      throw WallpaperSearchRequestFailure(
-        'Request failed with status: ${response.statusCode}',
-      );
-    }
-
-    final wallpaperListJson = jsonDecode(response.body) as Map<String, dynamic>;
-
-    if (!wallpaperListJson.containsKey('data')) {
-      throw const WallpaperNotFoundFailure(
-        'Wallpaper not found. Please check your query.',
-      );
-    }
-
-    return WallpaperList.fromJson(wallpaperListJson);
+  Future<http.Response> _get(Uri uri, String? apiKey) {
+    return _httpClient
+        .get(
+          uri,
+          headers: {
+            if (apiKey != null && apiKey.isNotEmpty) 'X-API-Key': apiKey,
+          },
+        )
+        .timeout(requestTimeout);
   }
 
-  /// Get [Wallpaper] info by id.
-  Future<WallpaperInfo> wallpaperInfo({
-    required String id,
-    String? apikey,
+  /// Finds a [WallpaperList].
+  Future<WallpaperList> searchWallpapers(
+    WallpaperQuery query, {
+    String? apiKey,
   }) async {
-    final request = Uri.https(
+    final uri = Uri.https(
       _baseUrl,
-      '/api/v1/w/$id',
-      apikey != null ? {'apikey': apikey} : null,
+      '/api/v1/search',
+      query.toQueryParameters(),
     );
+    final response = await _get(uri, apiKey);
 
-    final response = await _httpClient.get(request);
-
-    if (response.statusCode != 200) {
-      throw WallpaperIdInfoNotFoundFailure(
-        'Request failed with status: ${response.statusCode}',
-      );
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      if (!json.containsKey('data')) {
+        throw const WallhavenNotFoundFailure(
+          'Wallpaper not found. Please check your query.',
+        );
+      }
+      return WallpaperList.fromJson(json);
     }
 
-    final wallpaperInfoJson = jsonDecode(response.body) as Map<String, dynamic>;
+    if (response.statusCode == 429) {
+      throw const WallhavenRateLimitFailure();
+    }
 
-    return WallpaperInfo.fromJson(wallpaperInfoJson);
+    throw WallhavenRequestFailure(response.statusCode);
+  }
+
+  /// Get [Wallpaper] by id.
+  Future<Wallpaper> getWallpaper(String id, {String? apiKey}) async {
+    final uri = Uri.https(_baseUrl, '/api/v1/w/$id');
+    final response = await _get(uri, apiKey);
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      return Wallpaper.fromJson(json['data'] as Map<String, dynamic>);
+    }
+
+    if (response.statusCode == 404) {
+      throw const WallhavenNotFoundFailure('Wallpaper not found.');
+    }
+
+    if (response.statusCode == 429) {
+      throw const WallhavenRateLimitFailure();
+    }
+
+    throw WallhavenRequestFailure(response.statusCode);
   }
 
   /// Get [UserSettings] validation by apikey.
-  Future<UserSettings> apikeyValidation({required String apikey}) async {
-    final request = Uri.https(_baseUrl, '/api/v1/settings', {'apikey': apikey});
+  Future<UserSettings> getUserSettings({required String apiKey}) async {
+    final uri = Uri.https(_baseUrl, '/api/v1/settings');
+    final response = await _get(uri, apiKey);
 
-    final response = await _httpClient.get(request);
-
-    if (response.statusCode != 200) {
-      throw WallhavenApikeyNotValidFailure(
-        'Request failed with status: ${response.statusCode}',
-      );
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      return UserSettings.fromJson(json['data'] as Map<String, dynamic>);
     }
 
-    final userSettingsJson = jsonDecode(response.body) as Map<String, dynamic>;
+    if (response.statusCode == 401 || response.statusCode == 404) {
+      throw const WallhavenInvalidApiKeyFailure();
+    }
 
-    return UserSettings.fromJson(userSettingsJson);
+    if (response.statusCode == 429) {
+      throw const WallhavenRateLimitFailure();
+    }
+
+    throw WallhavenRequestFailure(response.statusCode);
   }
 }
