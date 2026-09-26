@@ -114,7 +114,6 @@ lib/
    # Or specify a target platform:
    flutter run -d windows    # Windows Desktop
    flutter run -d android    # Android (device or emulator)
-   flutter run -d chrome     # Web
    flutter run -d macos      # macOS (macOS host)
    flutter run -d linux      # Linux (Linux host)
    flutter run -d ios        # iOS (macOS host)
@@ -191,13 +190,6 @@ lib/
   # Output: build/ios/ipa/*.ipa
   ```
 
-### 🌐 Web
-- **Requirements:** Chrome or Chromium browser.
-- **Build Release:**
-  ```bash
-  flutter build web --release
-  # Output: build/web/
-  ```
 ---
 
 ## Screenshots 📸
