@@ -204,89 +204,33 @@ lib/
 
 ### Android
 
-|                     Home Page                    |                     Home Page - Search Filter Dialog                    |                     Wallpaper List Page                    |
-| ------------------------------------------------ | ----------------------------------------------------------------------- | ---------------------------------------------------------- |
-|![Home Page](assets/screenshots/Android_Screenshot_1.png)|![Home Page - Search Filter Dialog](assets/screenshots/Android_Screenshot_2.png)|![Wallpaper List Page](assets/screenshots/Android_Screenshot_3.png)|
-
-|                     Save Page                    |                     User Page                    |
-| ------------------------------------------------ | ------------------------------------------------ |
-|![Save Page](assets/screenshots/Android_Screenshot_4.png)|![User Page](assets/screenshots/Android_Screenshot_5.png)|
-
-|                     Wall Page                    |                     Wall Page 2                    |
-| ------------------------------------------------ | -------------------------------------------------- |
-|![Wall Page](assets/screenshots/Android_Screenshot_6.png)|![Wall Page 2](assets/screenshots/Android_Screenshot_7.png)|
-
-|                     Wall Page - Info Dialog                    |                     Wall Page - Save Dialog                    |                     Wall Page - Share Dialog                    |
-| -------------------------------------------------------------- | -------------------------------------------------------------- | --------------------------------------------------------------- |
-|![Wall Page - Info Dialog](assets/screenshots/Android_Screenshot_8.png)|![Wall Page - Save Dialog](assets/screenshots/Android_Screenshot_9.png)|![Wall Page - Share Dialog](assets/screenshots/Android_Screenshot_10.png)|
+|                        Home Page                        |                        Save Page                        |                        Profile Page                        |
+| ------------------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------------------- |
+|![Home Page](assets/screenshots/Android_Screenshot_1.png)|![Save Page](assets/screenshots/Android_Screenshot_2.png)|![Profile Page](assets/screenshots/Android_Screenshot_3.png)|
 
 ### iOS
 
-|                   Home Page                  |                   Home Page - Search Filter Dialog                  |                   Wallpaper List Page                  |
-| -------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------ |
-|![Home Page](assets/screenshots/iOS_Screenshot_1.png)|![Home Page - Search Filter Dialog](assets/screenshots/iOS_Screenshot_2.png)|![Wallpaper List Page](assets/screenshots/iOS_Screenshot_3.png)|
-
-|                   Save Page                  |                   User Page                  |
-| -------------------------------------------- | -------------------------------------------- |
-|![Save Page](assets/screenshots/iOS_Screenshot_4.png)|![User Page](assets/screenshots/iOS_Screenshot_5.png)|
-
-|                   Wall Page                  |                   Wall Page 2                  |
-| -------------------------------------------- | ---------------------------------------------- |
-|![Wall Page](assets/screenshots/iOS_Screenshot_6.png)|![Wall Page 2](assets/screenshots/iOS_Screenshot_7.png)|
-
-|                   Wall Page - Info Dialog                  |                   Wall Page - Save Dialog                  |                   Wall Page - Share Dialog                   |
-| ---------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
-|![Wall Page - Info Dialog](assets/screenshots/iOS_Screenshot_8.png)|![Wall Page - Save Dialog](assets/screenshots/iOS_Screenshot_9.png)|![Wall Page - Share Dialog](assets/screenshots/iOS_Screenshot_10.png)|
+|                       Home Page                       |                       Save Page                       |                       Profile Page                       |
+| ----------------------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------- |
+|![Home Page](assets/screenshots/iOS_Screenshot_1.png)|![Save Page](assets/screenshots/iOS_Screenshot_2.png)|![Profile Page](assets/screenshots/iOS_Screenshot_3.png)|
 
 ### macOS
 
-|                    Home Page                   |                    Home Page - Search Filter Dialog                   |                    Wallpaper List Page                   |
-| ---------------------------------------------- | --------------------------------------------------------------------- | -------------------------------------------------------- |
-|![Home Page](assets/screenshots/macOS_Screenshot_1.png)|![Home Page - Search Filter Dialog](assets/screenshots/macOS_Screenshot_2.png)|![Wallpaper List Page](assets/screenshots/macOS_Screenshot_3.png)|
-
-|                    Save Page                   |                    User Page                   |
-| ---------------------------------------------- | ---------------------------------------------- |
-|![Save Page](assets/screenshots/macOS_Screenshot_4.png)|![User Page](assets/screenshots/macOS_Screenshot_5.png)|
-
-|                    Wall Page                   |                    Wall Page 2                   |
-| ---------------------------------------------- | ------------------------------------------------ |
-|![Wall Page](assets/screenshots/macOS_Screenshot_6.png)|![Wall Page 2](assets/screenshots/macOS_Screenshot_7.png)|
-
-|                    Wall Page - Info Dialog                   |                    Wall Page - Save Dialog                   |                    Wall Page - Share Dialog                    |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | -------------------------------------------------------------- |
-|![Wall Page - Info Dialog](assets/screenshots/macOS_Screenshot_8.png)|![Wall Page - Save Dialog](assets/screenshots/macOS_Screenshot_9.png)|![Wall Page - Share Dialog](assets/screenshots/macOS_Screenshot_10.png)|
+|                        Home Page                        |                        Save Page                        |                        Profile Page                        |
+| ------------------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------------------- |
+|![Home Page](assets/screenshots/macOS_Screenshot_1.png)|![Save Page](assets/screenshots/macOS_Screenshot_2.png)|![Profile Page](assets/screenshots/macOS_Screenshot_3.png)|
 
 ### Linux
 
-|                   Home Page                    |                   Home Page - Filter                    |                   Home Page - Pagination                    |
-| ---------------------------------------------- | ------------------------------------------------------- | ----------------------------------------------------------- |
-|![Home Page](assets/screenshots/linux_Screenshot_1.png)|![Home Page - Filter](assets/screenshots/linux_Screenshot_2.png)|![Home Page - Pagination](assets/screenshots/linux_Screenshot_3.png)|
-
-|                   Wall Page                    |                       Wall Page - Info                       |                       Wall Page - Share                       |
-| ---------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------- |
-|![Wall Page](assets/screenshots/linux_Screenshot_4.png)|![Wall Page - Info Dialog](assets/screenshots/linux_Screenshot_5.png)|![Wall Page - Share Dialog](assets/screenshots/linux_Screenshot_6.png)|
-
-|                   Save Page                    |
-| ---------------------------------------------- |
-|![Save Page](assets/screenshots/linux_Screenshot_7.png)|
+|                        Home Page                        |                        Save Page                        |
+| ------------------------------------------------------- | ------------------------------------------------------- |
+|![Home Page](assets/screenshots/linux_Screenshot_1.png)|![Save Page](assets/screenshots/linux_Screenshot_2.png)|
 
 ### Windows
 
-|                     Home Page                    |                     Home Page - Search Filter Dialog                    |                     Wallpaper List Page                    |
-| ------------------------------------------------ | ----------------------------------------------------------------------- | ---------------------------------------------------------- |
-|![Home Page](assets/screenshots/Windows_Screenshot_1.png)|![Home Page - Search Filter Dialog](assets/screenshots/Windows_Screenshot_2.png)|![Wallpaper List Page](assets/screenshots/Windows_Screenshot_3.png)|
-
-|                     Save Page                    |                     User Page                    |
-| ------------------------------------------------ | ------------------------------------------------ |
-|![Save Page](assets/screenshots/Windows_Screenshot_4.png)|![User Page](assets/screenshots/Windows_Screenshot_5.png)|
-
-|                     Wall Page                    |                     Wall Page - Info Dialog                    |
-| ------------------------------------------------ | -------------------------------------------------------------- |
-|![Wall Page](assets/screenshots/Windows_Screenshot_6.png)|![Wall Page - Info Dialog](assets/screenshots/Windows_Screenshot_7.png)|
-
-|                     Wall Page - Save Dialog                    |                     Wall Page - Share Dialog                    |
-| -------------------------------------------------------------- | --------------------------------------------------------------- |
-|![Wall Page - Save Dialog](assets/screenshots/Windows_Screenshot_8.png)|![Wall Page - Share Dialog](assets/screenshots/Windows_Screenshot_9.png)|
+|                         Home Page                         |                         Save Page                         |                         Profile Page                         |
+| --------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------ |
+|![Home Page](assets/screenshots/Windows_Screenshot_1.png)|![Save Page](assets/screenshots/Windows_Screenshot_2.png)|![Profile Page](assets/screenshots/Windows_Screenshot_3.png)|
 
 _\*Haven App supports Android, iOS, macOS, Linux, and Windows._
 
