@@ -14,7 +14,13 @@ class LoggingClient extends http.BaseClient {
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final startTime = DateTime.now();
     _logger.info('--> ${request.method} ${request.url}');
-    _logger.finer('Headers: ${request.headers}');
+    final sanitizedHeaders = request.headers.map((key, value) {
+      if (key.toLowerCase() == 'x-api-key') {
+        return MapEntry(key, '***');
+      }
+      return MapEntry(key, value);
+    });
+    _logger.finer('Headers: $sanitizedHeaders');
 
     if (request is http.Request && request.body.isNotEmpty) {
       _logger.finer('Body: ${request.body}');
@@ -29,8 +35,15 @@ class LoggingClient extends http.BaseClient {
       );
       _logger.finer('Headers: ${response.headers}');
 
-      // We need to read the stream to log it, but that consumes it.
-      // To allow downstream consumers to read it, we must recreate it.
+      final contentType =
+          response.headers['content-type']?.toLowerCase() ?? '';
+      final isTextOrJson =
+          contentType.startsWith('application/json') ||
+          contentType.startsWith('text/');
+      if (!isTextOrJson) {
+        return response;
+      }
+
       final bytes = await response.stream.toBytes();
       if (bytes.isNotEmpty) {
         try {

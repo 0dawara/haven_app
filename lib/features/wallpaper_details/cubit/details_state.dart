@@ -1,22 +1,26 @@
 part of 'details_cubit.dart';
 
+enum DetailsStatus { loading, success, failure }
+
 class DetailsState extends Equatable {
-  const DetailsState({this.wallpaperInfo});
+  const DetailsState({
+    this.status = DetailsStatus.loading,
+    this.wallpaper,
+  });
 
-  factory DetailsState.fromJson(Map<String, dynamic> json) => DetailsState(
-    wallpaperInfo: json['wallpaperInfo'] == null
-        ? null
-        : WallpaperInfo.fromJson(json['wallpaperInfo'] as Map<String, dynamic>),
-  );
+  final DetailsStatus status;
+  final Wallpaper? wallpaper;
 
-  final WallpaperInfo? wallpaperInfo;
-
-  DetailsState copyWith({WallpaperInfo? wallpaperInfo}) {
-    return DetailsState(wallpaperInfo: wallpaperInfo ?? this.wallpaperInfo);
+  DetailsState copyWith({
+    DetailsStatus? status,
+    Wallpaper? wallpaper,
+  }) {
+    return DetailsState(
+      status: status ?? this.status,
+      wallpaper: wallpaper ?? this.wallpaper,
+    );
   }
 
-  Map<String, dynamic> toJson() => {'wallpaperInfo': wallpaperInfo?.toJson()};
-
   @override
-  List<Object?> get props => [wallpaperInfo];
+  List<Object?> get props => [status, wallpaper];
 }

@@ -4,6 +4,7 @@ import 'package:haven/core/core.dart';
 import 'package:haven/data/models/models.dart';
 import 'package:haven/features/settings/cubit/settings_cubit.dart';
 import 'package:haven/features/wallpaper_search/cubit/search_cubit.dart';
+import 'package:haven/l10n/l10n.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _textController.text = cubit.state.wallQuery.query ?? '';
+    _textController.text = cubit.state.wallQuery.query;
     cubit.fetchWallpaper();
   }
 
@@ -29,35 +30,6 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  void _updateCategory(int index, SearchState state) {
-    final currentCategories = List<bool>.from(
-      state.wallQuery.category ?? [true, true, false],
-    );
-    currentCategories[index] = !currentCategories[index];
-
-    cubit.fetchWallpaper(
-      wallQuery: state.wallQuery.copyWith(
-        category: currentCategories,
-        query: _textController.text,
-        page: 1,
-      ),
-    );
-  }
-
-  void _updatePurity(int index, SearchState state) {
-    final currentPurity =
-        state.wallQuery.purity?.map((e) => e ?? false).toList() ??
-        [true, false, false];
-    currentPurity[index] = !currentPurity[index];
-
-    cubit.fetchWallpaper(
-      wallQuery: state.wallQuery.copyWith(
-        purity: currentPurity.map((e) => e as bool?).toList(),
-        query: _textController.text,
-        page: 1,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,17 +41,14 @@ class _HomePageState extends State<HomePage> {
           listenWhen: (previous, current) =>
               previous.wallQuery.query != current.wallQuery.query,
           listener: (context, state) {
-            if (_textController.text != (state.wallQuery.query ?? '')) {
-              _textController.text = state.wallQuery.query ?? '';
+            if (_textController.text != state.wallQuery.query) {
+              _textController.text = state.wallQuery.query;
             }
           },
           builder: (context, state) {
-            final activeSort =
-                state.wallQuery.sorting ?? WallpaperSorting.toplist;
-            final categories = state.wallQuery.category ?? [true, true, false];
-            final purity =
-                state.wallQuery.purity?.map((e) => e ?? false).toList() ??
-                [true, false, false];
+            final activeSort = state.wallQuery.sorting;
+            final categories = state.wallQuery.category;
+            final purity = state.wallQuery.purity;
 
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -89,14 +58,7 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 32),
                   HomeSearchBar(
                     textController: _textController,
-                    onSearchPressed: () {
-                      cubit.fetchWallpaper(
-                        wallQuery: state.wallQuery.copyWith(
-                          query: _textController.text,
-                          page: 1,
-                        ),
-                      );
-                    },
+                    onSearchPressed: () => cubit.search(_textController.text),
                   ),
                   const SizedBox(height: 24),
                   // Primary Filters (Toplist, Hot, Latest, Random)
@@ -105,56 +67,36 @@ class _HomePageState extends State<HomePage> {
                     child: Row(
                       children: [
                         _FilterTab(
-                          label: 'Toplist',
+                          label: context.l10n.sortToplist,
                           isSelected: activeSort == WallpaperSorting.toplist,
-                          onTap: () {
-                            cubit.fetchWallpaper(
-                              wallQuery: state.wallQuery.copyWith(
-                                sorting: WallpaperSorting.toplist,
-                                query: _textController.text,
-                                page: 1,
-                              ),
-                            );
-                          },
+                          onTap: () => cubit.setSorting(
+                            WallpaperSorting.toplist,
+                            query: _textController.text,
+                          ),
                         ),
                         _FilterTab(
-                          label: 'Hot',
+                          label: context.l10n.sortHot,
                           isSelected: activeSort == WallpaperSorting.hot,
-                          onTap: () {
-                            cubit.fetchWallpaper(
-                              wallQuery: state.wallQuery.copyWith(
-                                sorting: WallpaperSorting.hot,
-                                query: _textController.text,
-                                page: 1,
-                              ),
-                            );
-                          },
+                          onTap: () => cubit.setSorting(
+                            WallpaperSorting.hot,
+                            query: _textController.text,
+                          ),
                         ),
                         _FilterTab(
-                          label: 'Latest',
+                          label: context.l10n.sortLatest,
                           isSelected: activeSort == WallpaperSorting.latest,
-                          onTap: () {
-                            cubit.fetchWallpaper(
-                              wallQuery: state.wallQuery.copyWith(
-                                sorting: WallpaperSorting.latest,
-                                query: _textController.text,
-                                page: 1,
-                              ),
-                            );
-                          },
+                          onTap: () => cubit.setSorting(
+                            WallpaperSorting.latest,
+                            query: _textController.text,
+                          ),
                         ),
                         _FilterTab(
-                          label: 'Random',
+                          label: context.l10n.sortRandom,
                           isSelected: activeSort == WallpaperSorting.random,
-                          onTap: () {
-                            cubit.fetchWallpaper(
-                              wallQuery: state.wallQuery.copyWith(
-                                sorting: WallpaperSorting.random,
-                                query: _textController.text,
-                                page: 1,
-                              ),
-                            );
-                          },
+                          onTap: () => cubit.setSorting(
+                            WallpaperSorting.random,
+                            query: _textController.text,
+                          ),
                         ),
                       ],
                     ),
@@ -166,38 +108,49 @@ class _HomePageState extends State<HomePage> {
                     child: Row(
                       children: [
                         _CategoryPill(
-                          label: 'General',
+                          label: context.l10n.categoryGeneral,
                           isSelected: categories[0],
                           color: const Color(0xFF3B3542),
-                          onTap: () => _updateCategory(0, state),
+                          onTap: () => cubit.toggleCategory(
+                            0,
+                            query: _textController.text,
+                          ),
                         ),
                         const SizedBox(width: 8),
                         _CategoryPill(
-                          label: 'Anime',
+                          label: context.l10n.categoryAnime,
                           isSelected: categories[1],
                           color: const Color(0xFF3B3542),
-                          onTap: () => _updateCategory(1, state),
+                          onTap: () => cubit.toggleCategory(
+                            1,
+                            query: _textController.text,
+                          ),
                         ),
                         const SizedBox(width: 8),
                         _CategoryPill(
-                          label: 'People',
+                          label: context.l10n.categoryPeople,
                           isSelected: categories[2],
                           color: const Color(0xFF3B3542),
-                          onTap: () => _updateCategory(2, state),
+                          onTap: () => cubit.toggleCategory(
+                            2,
+                            query: _textController.text,
+                          ),
                         ),
                         const SizedBox(width: 16),
                         _CategoryPill(
-                          label: 'SFW',
+                          label: context.l10n.puritySfw,
                           isSelected: purity[0],
                           color: AppTheme.accentGreen,
-                          onTap: () => _updatePurity(0, state),
+                          onTap: () =>
+                              cubit.togglePurity(0, query: _textController.text),
                         ),
                         const SizedBox(width: 8),
                         _CategoryPill(
-                          label: 'Sketchy',
+                          label: context.l10n.puritySketchy,
                           isSelected: purity[1],
                           color: AppTheme.accentOrange,
-                          onTap: () => _updatePurity(1, state),
+                          onTap: () =>
+                              cubit.togglePurity(1, query: _textController.text),
                         ),
                         BlocBuilder<SettingsCubit, SettingsState>(
                           builder: (context, settingsState) {
@@ -206,10 +159,13 @@ class _HomePageState extends State<HomePage> {
                               return Padding(
                                 padding: const EdgeInsets.only(left: 8.0),
                                 child: _CategoryPill(
-                                  label: 'NSFW',
+                                  label: context.l10n.purityNsfw,
                                   isSelected: purity[2],
                                   color: AppTheme.accentRed,
-                                  onTap: () => _updatePurity(2, state),
+                                  onTap: () => cubit.togglePurity(
+                                    2,
+                                    query: _textController.text,
+                                  ),
                                 ),
                               );
                             }
@@ -223,14 +179,8 @@ class _HomePageState extends State<HomePage> {
                   // Wallpaper Grid
                   Expanded(
                     child: HomeWallpaperList(
-                      onRefresh: () async {
-                        cubit.fetchWallpaper(
-                          wallQuery: state.wallQuery.copyWith(
-                            query: _textController.text,
-                            page: 1,
-                          ),
-                        );
-                      },
+                      onRefresh: () =>
+                          cubit.refresh(query: _textController.text),
                     ),
                   ),
                 ],

@@ -1,27 +1,31 @@
 import 'dart:io';
 import 'package:equatable/equatable.dart';
 
-abstract class SavedWallpapersState extends Equatable {
+sealed class SavedWallpapersState extends Equatable {
   const SavedWallpapersState();
 
   @override
   List<Object?> get props => [];
 }
 
-class SavedWallpapersInitial extends SavedWallpapersState {}
+final class SavedWallpapersInitial extends SavedWallpapersState {
+  const SavedWallpapersInitial();
+}
 
-class SavedWallpapersLoading extends SavedWallpapersState {}
+final class SavedWallpapersLoading extends SavedWallpapersState {
+  const SavedWallpapersLoading();
+}
 
-class SavedWallpapersSuccess extends SavedWallpapersState {
+final class SavedWallpapersSuccess extends SavedWallpapersState {
   const SavedWallpapersSuccess(this.wallpapers);
 
-  final List<FileSystemEntity> wallpapers;
+  final List<File> wallpapers;
 
   @override
   List<Object?> get props => [wallpapers];
 }
 
-class SavedWallpapersFailure extends SavedWallpapersState {
+final class SavedWallpapersFailure extends SavedWallpapersState {
   const SavedWallpapersFailure(this.error);
 
   final String error;

@@ -6,24 +6,39 @@ import 'package:logging/logging.dart';
 part 'settings_state.dart';
 
 class SettingsCubit extends HydratedCubit<SettingsState> {
-  SettingsCubit(this._wallhavenRepository) : super(const SettingsState());
+  SettingsCubit(this._wallhavenRepository) : super(const SettingsState()) {
+    _wallhavenRepository.updateApiKey(
+      state.userStatus == UserStatus.success ? state.apikey : null,
+    );
+  }
 
   final WallhavenRepository _wallhavenRepository;
   static final _logger = Logger('SettingsCubit');
 
   Future<void> validateApikey(String apikey) async {
+    final trimmed = apikey.trim();
+    if (trimmed.isEmpty) {
+      clearApikey();
+      return;
+    }
+
     emit(state.copyWith(userStatus: UserStatus.loading));
 
     try {
-      await _wallhavenRepository.apikeyValidation(apikey: apikey);
-      emit(state.copyWith(userStatus: UserStatus.success, apikey: apikey));
-    } catch (e) {
-      _logger.severe('Failed to validate apikey', e);
-      emit(state.copyWith(userStatus: UserStatus.failure));
+      await _wallhavenRepository.validateApiKey(trimmed);
+      _wallhavenRepository.updateApiKey(trimmed);
+      emit(state.copyWith(userStatus: UserStatus.success, apikey: trimmed));
+    } on WallhavenInvalidApiKeyFailure {
+      _wallhavenRepository.updateApiKey(null);
+      emit(state.copyWith(userStatus: UserStatus.failure, apikey: ''));
+    } on Exception catch (e, s) {
+      _logger.severe('Failed to validate apikey', e, s);
+      emit(state.copyWith(userStatus: UserStatus.unavailable));
     }
   }
 
   void clearApikey() {
+    _wallhavenRepository.updateApiKey(null);
     emit(const SettingsState());
   }
 

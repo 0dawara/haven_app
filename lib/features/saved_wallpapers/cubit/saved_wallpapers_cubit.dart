@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:haven/data/repository/wallpaper_storage.dart';
@@ -7,51 +6,32 @@ import 'package:haven/features/saved_wallpapers/cubit/saved_wallpapers_state.dar
 import 'package:logging/logging.dart';
 
 class SavedWallpapersCubit extends Cubit<SavedWallpapersState> {
-  SavedWallpapersCubit() : super(SavedWallpapersInitial());
+  SavedWallpapersCubit(this._storage) : super(const SavedWallpapersInitial());
 
-  StreamSubscription<FileSystemEvent>? _subscription;
+  final WallpaperStorage _storage;
+  StreamSubscription<void>? _subscription;
   static final _logger = Logger('SavedWallpapersCubit');
 
   Future<void> fetchWallpapers() async {
     try {
-      final dir = await WallpaperStorage.getWallpaperDirectory();
-      if (dir.existsSync()) {
-        final wallpapers = dir.listSync();
-        emit(SavedWallpapersSuccess(wallpapers));
-        _initWatcher(dir);
-      } else {
-        emit(const SavedWallpapersSuccess([]));
-        _initParentWatcher(dir);
-      }
+      emit(SavedWallpapersSuccess(await _storage.listWallpapers()));
+      _subscription ??= _storage.changes().listen(
+            (_) => _reload(),
+            onError: (Object error, StackTrace stackTrace) {
+              _logger.severe('Saved wallpapers watcher error', error, stackTrace);
+            },
+          );
     } catch (e, s) {
       _logger.severe('Failed to fetch saved wallpapers', e, s);
       emit(SavedWallpapersFailure(e.toString()));
     }
   }
 
-  void _initWatcher(Directory dir) {
-    _subscription?.cancel();
-    _subscription = dir.watch().listen((event) {
-      _updateWallpapers(dir);
-    });
-  }
-
-  void _initParentWatcher(Directory dir) {
-    _subscription?.cancel();
-    final parent = dir.parent;
-    if (parent.existsSync()) {
-      _subscription = parent.watch().listen((event) {
-        if (dir.existsSync()) {
-          fetchWallpapers();
-        }
-      });
-    }
-  }
-
-  void _updateWallpapers(Directory dir) {
-    if (dir.existsSync()) {
-      final wallpapers = dir.listSync();
-      emit(SavedWallpapersSuccess(wallpapers));
+  Future<void> _reload() async {
+    try {
+      emit(SavedWallpapersSuccess(await _storage.listWallpapers()));
+    } catch (e, s) {
+      _logger.severe('Failed to reload saved wallpapers', e, s);
     }
   }
 

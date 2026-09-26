@@ -22,8 +22,8 @@ class RoundedSquareButton extends StatelessWidget {
             backgroundColor: Colors.white24,
             elevation: 0,
             fixedSize: Size(
-              MediaQuery.of(context).size.height / 11,
-              MediaQuery.of(context).size.height / 11,
+              MediaQuery.sizeOf(context).height / 11,
+              MediaQuery.sizeOf(context).height / 11,
             ),
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(10)),

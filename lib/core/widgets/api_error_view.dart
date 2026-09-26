@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:haven/core/utils/app_theme.dart';
+import 'package:haven/l10n/l10n.dart';
 
 class ApiErrorView extends StatelessWidget {
   const ApiErrorView({
     this.onRetry,
-    this.title = 'Wallhaven is having a moment',
-    this.message =
-        "We can't reach the wallpaper service right now. "
-        "It's not you — hang tight and try again in a bit.",
+    this.title,
+    this.message,
     super.key,
   });
 
   final VoidCallback? onRetry;
-  final String title;
-  final String message;
+  final String? title;
+  final String? message;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +29,7 @@ class ApiErrorView extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              title,
+              title ?? context.l10n.apiErrorTitle,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 20,
@@ -40,7 +39,7 @@ class ApiErrorView extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              message,
+              message ?? context.l10n.apiErrorMessage,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 14,
@@ -52,7 +51,7 @@ class ApiErrorView extends StatelessWidget {
               FilledButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),
-                label: const Text('Try again'),
+                label: Text(context.l10n.tryAgain),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppTheme.primaryPurple,
                   foregroundColor: AppTheme.textPrimary,

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:haven/l10n/l10n.dart';
 
 class ShareDialog extends StatelessWidget {
   const ShareDialog({
@@ -13,18 +14,18 @@ class ShareDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoAlertDialog(
-      title: const Text('Share'),
-      content: const Text('How do you want to share the image?'),
+      title: Text(context.l10n.shareTitle),
+      content: Text(context.l10n.shareQuestion),
       actions: <CupertinoDialogAction>[
         CupertinoDialogAction(
           isDefaultAction: true,
           onPressed: onPressedFile,
-          child: const Text('File'),
+          child: Text(context.l10n.shareFile),
         ),
         CupertinoDialogAction(
           isDefaultAction: true,
           onPressed: onPressedLink,
-          child: const Text('Link'),
+          child: Text(context.l10n.shareLink),
         ),
       ],
     );

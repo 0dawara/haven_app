@@ -1,11 +1,16 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart' hide RefreshCallback;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:haven/app_router.dart';
 import 'package:haven/core/utils/app_theme.dart';
+import 'package:haven/core/utils/color_extension.dart';
 import 'package:haven/core/widgets/api_error_view.dart';
-import 'package:haven/features/wallpaper_details/view/wallpaper_details_page.dart';
 import 'package:haven/features/wallpaper_search/cubit/search_cubit.dart';
+import 'package:haven/l10n/l10n.dart';
 
 class HomeWallpaperList extends StatefulWidget {
   const HomeWallpaperList({required this.onRefresh, super.key});
@@ -43,10 +48,10 @@ class _HomeWallpaperListState extends State<HomeWallpaperList> {
                       constraints: BoxConstraints(
                         minHeight: constraints.maxHeight,
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
-                          'No wallpapers found',
-                          style: TextStyle(color: Colors.white),
+                          context.l10n.noWallpapersFound,
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ),
                     ),
@@ -60,8 +65,8 @@ class _HomeWallpaperListState extends State<HomeWallpaperList> {
                     padding: const EdgeInsets.only(bottom: 20),
                     sliver: SliverGrid(
                       gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 240,
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 12,
                             childAspectRatio: 0.7,
@@ -71,13 +76,9 @@ class _HomeWallpaperListState extends State<HomeWallpaperList> {
                         final purity = wallpaper.purity.toLowerCase();
 
                         return GestureDetector(
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => WallpaperDetailsPage(
-                                id: wallpaper.id,
-                                url: wallpaper.path,
-                              ),
-                            ),
+                          onTap: () => context.push(
+                            AppRoutes.wallpaper(wallpaper.id),
+                            extra: wallpaper.path,
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(16),
@@ -88,6 +89,11 @@ class _HomeWallpaperListState extends State<HomeWallpaperList> {
                                     ? CachedNetworkImage(
                                         imageUrl: wallpaper.thumbs.original,
                                         fit: BoxFit.cover,
+                                        memCacheWidth: (240 *
+                                                MediaQuery.devicePixelRatioOf(
+                                                  context,
+                                                ))
+                                            .round(),
                                         placeholder: (context, url) =>
                                             Container(
                                               color: AppTheme.cardColor,
@@ -143,10 +149,6 @@ class _HomeWallpaperListState extends State<HomeWallpaperList> {
                                         children: wallpaper.colors.take(5).map((
                                           colorHex,
                                         ) {
-                                          final hexCode = colorHex.replaceAll(
-                                            '#',
-                                            '',
-                                          );
                                           return Container(
                                             margin: const EdgeInsets.symmetric(
                                               horizontal: 2,
@@ -154,9 +156,7 @@ class _HomeWallpaperListState extends State<HomeWallpaperList> {
                                             width: 12,
                                             height: 12,
                                             decoration: BoxDecoration(
-                                              color: Color(
-                                                int.parse('0xFF$hexCode'),
-                                              ),
+                                              color: HexColor.fromHex(colorHex),
                                               shape: BoxShape.circle,
                                               border: Border.all(
                                                 color: Colors.white24,
@@ -223,15 +223,10 @@ class _PageNavigation extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
+          tooltip: context.l10n.tooltipPreviousPage,
           icon: const Icon(Icons.chevron_left, color: Colors.white),
           onPressed: currentPage > 1
-              ? () {
-                  cubit.fetchWallpaper(
-                    wallQuery: cubit.state.wallQuery.copyWith(
-                      page: currentPage - 1,
-                    ),
-                  );
-                }
+              ? () => cubit.goToPage(currentPage - 1)
               : null,
         ),
         const SizedBox(width: 16),
@@ -244,9 +239,9 @@ class _PageNavigation extends StatelessWidget {
                 int selectedPage = currentPage;
                 return AlertDialog(
                   backgroundColor: AppTheme.cardColor,
-                  title: const Text(
-                    'Go to page',
-                    style: TextStyle(color: Colors.white),
+                  title: Text(
+                    context.l10n.goToPageTitle,
+                    style: const TextStyle(color: Colors.white),
                   ),
                   content: SizedBox(
                     height: 200,
@@ -275,16 +270,16 @@ class _PageNavigation extends StatelessWidget {
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(color: Colors.white54),
+                      child: Text(
+                        context.l10n.cancel,
+                        style: const TextStyle(color: Colors.white54),
                       ),
                     ),
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(selectedPage),
-                      child: const Text(
-                        'Go',
-                        style: TextStyle(color: AppTheme.primaryPurple),
+                      child: Text(
+                        context.l10n.go,
+                        style: const TextStyle(color: AppTheme.primaryPurple),
                       ),
                     ),
                   ],
@@ -293,27 +288,20 @@ class _PageNavigation extends StatelessWidget {
             );
 
             if (page != null && page != currentPage && context.mounted) {
-              cubit.fetchWallpaper(
-                wallQuery: cubit.state.wallQuery.copyWith(page: page),
-              );
+              unawaited(cubit.goToPage(page));
             }
           },
           child: Text(
-            'Page $currentPage of $lastPage',
+            context.l10n.pageOf(currentPage, lastPage),
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
         ),
         const SizedBox(width: 16),
         IconButton(
+          tooltip: context.l10n.tooltipNextPage,
           icon: const Icon(Icons.chevron_right, color: Colors.white),
           onPressed: currentPage < lastPage
-              ? () {
-                  cubit.fetchWallpaper(
-                    wallQuery: cubit.state.wallQuery.copyWith(
-                      page: currentPage + 1,
-                    ),
-                  );
-                }
+              ? () => cubit.goToPage(currentPage + 1)
               : null,
         ),
       ],

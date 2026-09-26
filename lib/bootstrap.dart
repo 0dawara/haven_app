@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:haven/core/utils/app_logger.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:logging/logging.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 class AppBlocObserver extends BlocObserver {
@@ -47,11 +49,44 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
 
   Bloc.observer = const AppBlocObserver();
 
-  HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: kIsWeb
-        ? HydratedStorageDirectory.web
-        : HydratedStorageDirectory((await getTemporaryDirectory()).path),
-  );
+  final supportDir = await getApplicationSupportDirectory();
+  final supportBox = File(p.join(supportDir.path, 'hydrated_box.hive'));
+  try {
+    if (!supportBox.existsSync()) {
+      final tempDir = await getTemporaryDirectory();
+      final tempBox = File(p.join(tempDir.path, 'hydrated_box.hive'));
+      if (tempBox.existsSync()) {
+        await supportDir.create(recursive: true);
+        await tempBox.copy(supportBox.path);
+      }
+    }
+  } catch (e, s) {
+    logger.warning(
+      'Failed to migrate hydrated_box.hive from temp directory',
+      e,
+      s,
+    );
+  }
+
+  try {
+    HydratedBloc.storage = await HydratedStorage.build(
+      storageDirectory: HydratedStorageDirectory(supportDir.path),
+    );
+  } catch (e, s) {
+    logger.warning(
+      'Failed to build HydratedStorage with copied box, recreating storage',
+      e,
+      s,
+    );
+    if (supportBox.existsSync()) {
+      try {
+        await supportBox.delete();
+      } catch (_) {}
+    }
+    HydratedBloc.storage = await HydratedStorage.build(
+      storageDirectory: HydratedStorageDirectory(supportDir.path),
+    );
+  }
 
   runApp(await builder());
 }
