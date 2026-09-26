@@ -1,0 +1,110 @@
+{
+  "@@locale": "en",
+  "appTitle": "Haven App",
+  "navHome": "Home",
+  "navSaved": "Saved",
+  "navProfile": "Profile",
+
+  "sortToplist": "Toplist",
+  "sortHot": "Hot",
+  "sortLatest": "Latest",
+  "sortRandom": "Random",
+  "categoryGeneral": "General",
+  "categoryAnime": "Anime",
+  "categoryPeople": "People",
+  "puritySfw": "SFW",
+  "puritySketchy": "Sketchy",
+  "purityNsfw": "NSFW",
+
+  "searchHint": "Search wallpapers, tags...",
+  "noWallpapersFound": "Wallhaven is having a moment",
+  "goToPageTitle": "Go to page",
+  "cancel": "Cancel",
+  "go": "Go",
+  "pageOf": "Page {current} of {last}",
+  "@pageOf": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "last": { "type": "int" }
+    }
+  },
+
+  "apiErrorTitle": "Wallhaven is having a moment",
+  "apiErrorMessage": "We're having trouble reaching the servers right now. Check your connection or try again shortly.",
+  "tryAgain": "Try again",
+
+  "detailsUploader": "Uploader",
+  "detailsSaveWallpaper": "Save Wallpaper",
+  "detailsLoadFailed": "Couldn't load wallpaper details",
+
+  "actionInfo": "Info",
+  "actionShare": "Share",
+  "shareTitle": "Share",
+  "shareQuestion": "How do you want to share the image?",
+  "shareFile": "File",
+  "shareLink": "Link",
+  "shareFailed": "Couldn't share the wallpaper",
+
+  "saveTitle": "Save",
+  "downloadPreparing": "Getting pictures folder...",
+  "downloadProgress": "Downloading image... {percent}%",
+  "@downloadProgress": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "downloadIndeterminate": "Downloading image...",
+  "downloadAlreadyExists": "Image already downloaded!",
+  "downloadSuccess": "Image downloaded at Pictures/wallhaven/",
+  "downloadPermissionDenied": "Storage permission denied",
+  "downloadUnsupported": "Please use the Share button!",
+  "downloadFailed": "Download failed",
+
+  "savedTitle": "Saved",
+  "savedCount": "{count, plural, =1{A wallpaper you saved} other{{count} wallpapers that you saved}}",
+  "@savedCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "savedLoading": "Loading wallpapers...",
+  "savedEmpty": "Can't find any saved wallpaper",
+
+  "settingsTitle": "Settings",
+  "settingsSubtitle": "Enter your API key below",
+  "settingsApiKeyHint": "Wallhaven API Key",
+  "settingsValidate": "Validate",
+  "settingsKeyInvalid": "API key is not valid",
+  "settingsKeyValid": "You're good to go!",
+  "settingsUnavailable": "Couldn't reach Wallhaven. Try again later.",
+
+  "infoId": "id",
+  "infoUploader": "uploader",
+  "infoCategory": "category",
+  "infoResolution": "resolution",
+  "infoType": "type",
+  "infoSize": "size",
+  "infoViews": "views",
+  "infoFavorites": "favorites",
+  "infoLink": "link",
+  "infoDateAdded": "date added",
+  "infoColors": "colors",
+  "infoTags": "tags",
+  "colorCopied": "Color {color} copied to clipboard",
+  "@colorCopied": {
+    "placeholders": {
+      "color": { "type": "String" }
+    }
+  },
+
+  "tooltipBack": "Back",
+  "tooltipToggleFit": "Toggle fit",
+  "tooltipShowKey": "Show API key",
+  "tooltipHideKey": "Hide API key",
+  "tooltipPaste": "Paste from clipboard",
+  "tooltipClear": "Clear API key",
+  "tooltipSearch": "Search",
+  "tooltipClearSearch": "Clear search",
+  "tooltipPreviousPage": "Previous page",
+  "tooltipNextPage": "Next page"
+}
